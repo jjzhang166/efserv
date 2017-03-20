@@ -162,8 +162,8 @@ Look at `/usr/local/efserv/.efserv_access`
 And regex pattern is fine, for example
 
 ```
-# + ^/private/resources/.*$
-# - ^/private/.*$
++ ^/private/resources/.*$
+- ^/private/.*$
 ```
 
 # Images

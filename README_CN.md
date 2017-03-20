@@ -165,8 +165,8 @@ err_tpl = tpl/err.html
 使用正则，例如
 
 ```
-# + ^/private/resources/.*$
-# - ^/private/.*$
++ ^/private/resources/.*$
+- ^/private/.*$
 ```
 
 # 图片
