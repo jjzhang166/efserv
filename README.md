@@ -138,7 +138,7 @@ err_tpl = tpl/err.html
 # things will be different, all request start with "/private/" will be denied
 # the rule are matched from up to bottom, the last rule will be effective
 # if nothing is private, just remove this file or let it empty
-# by default, ".efserv_access" itself and "config.ini" in web root is denied, you can allow it by add line "+ .efserv_access" and "+ config.ini"
+# by default, ".efserv_access" itself and ".efserv_config" in web root is denied, you can allow it by add line "+ .efserv_access" and "+ .efserv_config"
 # access_rule = .efserv_access
 ```
 
