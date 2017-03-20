@@ -171,6 +171,12 @@ err_tpl = tpl/err.html
 - ^/private/.*$
 ```
 
+# Issues
+
+如果发生 `addr bind error` 错误，可能该端口已经被其它程序占用，或者选择的端口小于1024。
+小于1024的端口是系统保留的，如果需要使用小于1024的端口，必须提供root用户权限，使用 `sudo efserv ...`。
+这不是一个issue。
+
 # 图片
 
 ![Indexs](imgs/indexs.png)

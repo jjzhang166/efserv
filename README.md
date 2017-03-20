@@ -168,6 +168,12 @@ And regex pattern is fine, for example
 - ^/private/.*$
 ```
 
+# Issues
+
+If `addr bind error` occured, maybe port is in use, or port < 1024, 
+you know, if port < 1024, you need root user authority, just run with `sudo efserv ...`.
+This not an issue.
+ 
 # Images
 
 ![Indexs](imgs/indexs.png)
