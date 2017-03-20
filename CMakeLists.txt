@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.6)
 set(CMAKE_CXX_STANDARD 11)
 
 project(efserv)
@@ -28,7 +28,7 @@ else()
             libev DEFAULT_MSG LIBEV_LIBRARY LIBEV_INCLUDE_DIR)
     mark_as_advanced(LIBEV_LIBRARY LIBEV_INCLUDE_DIR)
 endif()
-if(${LIBEV_FOUND})
+if(LIBEV_FOUND)
     message(STATUS "libev found")
 else()
     message(FATAL_ERROR "libev not found")
@@ -83,3 +83,10 @@ target_link_libraries(
         ${LIBEV_LIBRARIES}
         ${LIBHTTP_PARSER_LIBRARIES}
 )
+
+SET(CMAKE_INSTALL_PREFIX /usr/local)
+
+
+INSTALL(PROGRAMS ${PROJECT_BINARY_DIR}/${EXECUTABLE_NAME} DESTINATION bin)
+INSTALL(DIRECTORY tpl DESTINATION efserv)
+INSTALL(FILES README.md README_CN.md LICENSE.md .efserv_access config.ini DESTINATION efserv)

@@ -12,7 +12,7 @@ string config_path = "";
 
 void print_usage() {
     printf(
-            "EzerFileServer\n"
+            "EzFileServer\n"
                     "Author : xiaozhuai\n"
                     "Email  : 798047000@qq.com\n"
                     "Usage  : efserv [OPTION]...\n"
