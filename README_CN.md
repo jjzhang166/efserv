@@ -85,7 +85,7 @@ Usage  : efserv [OPTION]...
 All arguments are long options
   --config <file>           Define the ini config path, it will be ".efserv_config" under web root by default
   --root <dir>              Define the web root path, it will be "/var/www" by default
-  --log-level <level>       Define the log level, available levels are : disable, error, warning, info, debug
+  --log-level <level>       Define the log level, available levels are : disable, error, warning, info(default), debug
   --help                    Print this help message
 ```
 

@@ -20,7 +20,7 @@ void print_usage() {
                     "All arguments are long options\n"
                     "  --config <file>           Define the ini config path, it will be \".efserv_config\" under web root by default\n"
                     "  --root <dir>              Define the web root path, it will be \"/var/www\" by default\n"
-                    "  --log-level <level>       Define the log level, available levels are : disable, error, warning, info, debug\n"
+                    "  --log-level <level>       Define the log level, available levels are : disable, error, warning, info(default), debug\n"
                     "  --help                    Print this help message\n"
     );
 }
