@@ -39,7 +39,7 @@ void Response::respondContent(int fd, const char *content, size_t length) {
 
 string assign(string format, string key, string value){
     key = "{{" + key + "}}";
-    StringUtils::replaceAll(format, key, value);
+    format = StringUtils::replaceAll(format, key, value);
     return format;
 }
 
