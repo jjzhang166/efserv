@@ -106,7 +106,7 @@ efserv 有5个日志等级， 你可以通过 `--log-level` 选项来调节。
 文件里已经包含详细的说明。
 
 ```
-# EzerFileServer project
+# EzFileServer project
 # author: xiaozhuai
 # email: 798047000@qq.com
 

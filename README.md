@@ -104,7 +104,7 @@ Let's find out what are there in config file.
 Take a look at `/usr/local/efserv/config.ini`(this is just a demo file).
 
 ```
-# EzerFileServer project
+# EzFileServer project
 # author: xiaozhuai
 # email: 798047000@qq.com
 
