@@ -12,6 +12,7 @@
 #include "FileHandler.h"
 #include "version.h"
 #include "StringUtils.h"
+#include "AccessRule.h"
 
 class Response {
     public:

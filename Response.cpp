@@ -85,7 +85,19 @@ void Response::respondIndexs(int fd, vector<FileHandler> files, string url) {
     size_t fileCount = files.size();
     string fileListJson = "[\n";
     for(int i=0; i<fileCount; i++){
+
         FileHandler file = files[i];
+
+        /**
+         * ignore the url that are denied
+         */
+        string tmp = url;
+        rtrim(tmp, '/');
+        tmp += "/" + file.getName();
+        if(!ACCESS_RULE.permissible(tmp)){
+            continue;
+        }
+
         string obj = tfm::format(
                 "    {\n"
                 "        \"is_file\":%s,\n"
