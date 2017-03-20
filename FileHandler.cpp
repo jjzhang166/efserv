@@ -34,18 +34,29 @@ bool FileHandler::isLink() {
 
 time_t FileHandler::getCreateTime() {
     if(!m_exist) return 0;
+#ifdef __APPLE__
     return m_fileStat.st_ctimespec.tv_sec;
-
+#else
+    return m_fileStat.st_ctim.tv_sec;
+#endif
 }
 
 time_t FileHandler::getModifyTime() {
     if(!m_exist) return 0;
+#ifdef __APPLE__
     return m_fileStat.st_mtimespec.tv_sec;
+#else
+    return m_fileStat.st_mtim.tv_sec;
+#endif
 }
 
 time_t FileHandler::getAccessTime() {
     if(!m_exist) return 0;
+#ifdef __APPLE__
     return m_fileStat.st_atimespec.tv_sec;
+#else
+    return m_fileStat.st_mtim.tv_sec;
+#endif
 }
 
 string FileHandler::getAbsolutePath() {
