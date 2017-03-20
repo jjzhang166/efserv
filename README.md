@@ -27,7 +27,7 @@ Sorry, I do not try it, find out yourself.
 
 For OSX:
 
-You need brew. (A package manager or osx)
+You need brew. (A package manager for osx)
 
 ```
 $ brew install libev
