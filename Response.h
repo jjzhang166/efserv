@@ -11,6 +11,7 @@
 #include "ServEnv.h"
 #include "FileHandler.h"
 #include "version.h"
+#include "StringUtils.h"
 
 class Response {
     public:

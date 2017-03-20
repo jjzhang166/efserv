@@ -27,3 +27,12 @@ vector<string> StringUtils::split(string str, string pattern, int limit) {
     }
     return result;
 }
+
+string StringUtils::replaceAll(string str, string find, string replace) {
+    size_t start_pos = 0;
+    while((start_pos = str.find(find, start_pos)) != std::string::npos) {
+        str = str.replace(start_pos, find.length(), replace);
+        start_pos += replace.length();
+    }
+    return str;
+}

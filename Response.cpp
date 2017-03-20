@@ -39,13 +39,7 @@ void Response::respondContent(int fd, const char *content, size_t length) {
 
 string assign(string format, string key, string value){
     key = "{{" + key + "}}";
-
-    size_t start_pos = 0;
-    while((start_pos = format.find(key, start_pos)) != std::string::npos) {
-        format = format.replace(start_pos, key.length(), value);
-        start_pos += value.length(); // Handles case where 'to' is a substring of 'from'
-    }
-
+    StringUtils::replaceAll(format, key, value);
     return format;
 }
 
