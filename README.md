@@ -110,23 +110,23 @@ Take a look at `/usr/local/efserv/config.ini`(this is just a demo file).
 # author: xiaozhuai
 # email: 798047000@qq.com
 
-#define the listening addr, use 0.0.0.0 by default
-listen = 0.0.0.0
+# define the listening addr, use 0.0.0.0 by default
+#listen = 0.0.0.0
 
 # define the listening port, use 80 by default
 port = 8080
 
 # whether enable dir indexs, is enabled by default, 0 disable, 1 enable
 # if disable, all request to dir will be denied (403)
-dir_indexs = 1
+# dir_indexs = 1
 
 # define the view tpl of dir indexs, use "/usr/local/efserv/tpl/dir_indexs.html" by default
 # dir_indexs_tpl = /usr/local/efserv/tpl/dir_indexs.html
-dir_indexs_tpl = tpl/dir_indexs.html
+# dir_indexs_tpl = tpl/dir_indexs.html
 
 # define the err page tpl, use "/use/local/efserv/tpl/err.html" by default
 # err_tpl = /use/local/efserv/tpl/err.html
-err_tpl = tpl/err.html
+# err_tpl = tpl/err.html
 
 # define the access rule file name, use ".efserv_access" by default. This file should be under the root of web server
 # .efserv_access should be like this
