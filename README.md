@@ -10,6 +10,8 @@ efserv is an Event-driven asynchronous http static file server written in C++，
 
 Since it's a file server, all http request will be treated as `GET`
 
+![logo](logo.png)
+
 # Dependencies
 * [libev](http://software.schmorp.de/pkg/libev.html) (not included in project)
 * [http_parser](https://github.com/nodejs/http-parser) (included)

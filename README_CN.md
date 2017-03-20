@@ -10,6 +10,8 @@ efserv 是一个事件驱动异步模型的http静态文件服务器，使用C++
 
 由于是一个静态文件服务器，所有的请求都会被当做 `GET` 请求来处理。
 
+![logo](logo.png)
+
 # 依赖
 * [libev](http://software.schmorp.de/pkg/libev.html) (未包含在项目中)
 * [http_parser](https://github.com/nodejs/http-parser) (已包含在项目中)
