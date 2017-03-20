@@ -1,0 +1,85 @@
+cmake_minimum_required(VERSION 3.6)
+set(CMAKE_CXX_STANDARD 11)
+
+project(efserv)
+set(EXECUTABLE_NAME efserv)
+
+# Try find libev
+# LIBEV_FOUND        - system has libev
+# LIBEV_INCLUDE_DIRS - libev include directories
+# LIBEV_LIBRARIES    - libraries needed to use libev
+if(LIBEV_INCLUDE_DIRS AND LIBEV_LIBRARIES)
+    set(LIBEV_FIND_QUIETLY TRUE)
+else()
+    find_path(
+            LIBEV_INCLUDE_DIR
+            NAMES ev.h
+            HINTS ${LIBEV_ROOT_DIR}
+            PATH_SUFFIXES include)
+    find_library(
+            LIBEV_LIBRARY
+            NAME ev
+            HINTS ${LIBEV_ROOT_DIR}
+            PATH_SUFFIXES ${CMAKE_INSTALL_LIBDIR})
+    set(LIBEV_INCLUDE_DIRS ${LIBEV_INCLUDE_DIR})
+    set(LIBEV_LIBRARIES ${LIBEV_LIBRARY})
+    include(FindPackageHandleStandardArgs)
+    find_package_handle_standard_args(
+            libev DEFAULT_MSG LIBEV_LIBRARY LIBEV_INCLUDE_DIR)
+    mark_as_advanced(LIBEV_LIBRARY LIBEV_INCLUDE_DIR)
+endif()
+if(${LIBEV_FOUND})
+    message(STATUS "libev found")
+else()
+    message(FATAL_ERROR "libev not found")
+endif()
+# End of find libev
+
+
+# Add libhttp_parser
+# LIBHTTP_PARSER_FOUND        - thirdparty has libut
+# LIBHTTP_PARSER_INCLUDE_DIRS - libhttp_parser include directories
+# LIBHTTP_PARSER_LIBRARIES    - libraries needed to use libhttp_parser
+ADD_SUBDIRECTORY(thirdparty/libhttp_parser)
+set(LIBHTTP_PARSER_INCLUDE_DIRS thirdparty/libhttp_parser)
+set(LIBHTTP_PARSER_LIBRARIES http_parser)
+# End of add libhttp_parser
+
+
+# Add tinyformat
+# TINY_FORMAT_INCLUDE_DIRS - tinyformat include directories
+set(TINY_FORMAT_INCLUDE_DIRS thirdparty/tinyformat)
+# End of add tinyformat
+
+
+# Set include dirs
+include_directories(
+        ${LIBEV_INCLUDE_DIRS}
+        ${LIBHTTP_PARSER_INCLUDE_DIRS}
+        ${TINY_FORMAT_INCLUDE_DIRS}
+)
+# End of set include dirs
+
+
+# Sources
+set(SOURCE_FILES
+        main.cpp
+        log.cpp
+        Ini.cpp
+        ServEnv.cpp
+        FileHandler.cpp
+        Response.cpp
+        EventLoop.cpp
+        StringUtils.cpp
+        MimeType.cpp
+        AccessRule.cpp
+)
+# End of sources
+
+add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
+
+target_link_libraries(
+        ${EXECUTABLE_NAME}
+        ${LIBEV_LIBRARIES}
+        ${LIBHTTP_PARSER_LIBRARIES}
+)
