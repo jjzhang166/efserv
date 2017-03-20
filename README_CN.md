@@ -6,7 +6,7 @@
 
 * email: 798047000@qq.com
 
-efserv 是一个事件驱动异步模型的http静态文件服务器，使用C++编写。具有高性能，低内存的有点。全名为 EzFileServer。
+efserv 是一个事件驱动异步模型的http静态文件服务器，使用C++编写。具有高性能，低内存的优点。全名为 EzFileServer。
 
 由于是一个静态文件服务器，所有的请求都会被当做 `GET` 请求来处理。
 
@@ -19,17 +19,17 @@ efserv 是一个事件驱动异步模型的http静态文件服务器，使用C++
 
 在构建项目之前，你需要安装 libev
 
-Debian 系列 linux：
+**Debian 系列 linux：**
 
 ```
 $ sudo apt-get install libev-dev
 ```
 
-Redhat 系统 linux：
+**Redhat 系列 linux：**
 
 我没有尝试，你可以自己google一下。
 
-For OSX:
+**For OSX:**
 
 你需要安装brew。（一个osx平台的包管理软件）
 

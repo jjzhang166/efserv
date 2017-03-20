@@ -19,17 +19,17 @@ Since it's a file server, all http request will be treated as `GET`
 
 Before you can build, you need install libev.
 
-For linux (debian like):
+**For linux (debian like):**
 
 ```
 $ sudo apt-get install libev-dev
 ```
 
-For linux (redhat like):
+**For linux (redhat like):**
 
 Sorry, I do not try it, find out yourself.
 
-For OSX:
+**For OSX:**
 
 You need brew. (A package manager for osx)
 
