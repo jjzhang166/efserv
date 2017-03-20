@@ -19,7 +19,7 @@
 #define DEFAULT_PORT                "80"
 #define DEFAULT_DIR_INDEXS          "1"
 #define DEFAULT_DIR_INDEXS_TPL      "/usr/local/efserv/tpl/dir_indexs.html"
-#define DEFAULT_ERR_TPL             "/use/local/efserv/tpl/err.html"
+#define DEFAULT_ERR_TPL             "/usr/local/efserv/tpl/err.html"
 #define DEFAULT_ACCESS_RULE         ".efserv_access"
 
 #define DEFAULT_WEB_ROOT            "/var/www"
