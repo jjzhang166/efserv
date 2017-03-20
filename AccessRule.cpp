@@ -15,8 +15,8 @@ void AccessRule::loadAccessRule() {
      * denied .efserv_access and .efserv_config by default
      */
 
-    rules.push_back(Rule(false, ".efserv_config"));
-    rules.push_back(Rule(false, ruleFileName));
+    rules.push_back(Rule(false, "/.efserv_config"));
+    rules.push_back(Rule(false, "/"+ruleFileName));
 
 
     string rulePath = SERV_ENV.getAbsoluteWebRoot() + "/" + ruleFileName;
