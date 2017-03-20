@@ -39,10 +39,10 @@ int EventLoop::on_message_complete(http_parser *parser) {
 
 void EventLoop::close_client(int fd) {
     ClientInfo *client = client_list[fd];
-    if(client->io!=NULL){
-        ev_io_stop(main_loop, client->io);
-    }
     if(client != NULL){
+        if(client->io!=NULL){
+            ev_io_stop(main_loop, client->io);
+        }
         delete(client);
         client_list[fd] = NULL;
     }
