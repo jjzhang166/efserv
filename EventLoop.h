@@ -13,6 +13,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <http_parser.h>
+#include <sys/ioctl.h>
 #include "Response.h"
 #include "FileHandler.h"
 #include "ServEnv.h"

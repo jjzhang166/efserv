@@ -99,7 +99,14 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
     if(EV_READ & e){
         LOGD("client io read event [%d]", fd);
         char buffer[BUFFER_SIZE];
-        ssize_t recved = recv(fd, buffer, sizeof(buffer)-1, 0);
+        int maxRead = sizeof(buffer)-1;
+        int n;
+        if(ioctl(fd, FIONREAD, &n)){
+            LOGW("ioctl FIONREAD err [%d]", fd);
+            close_client(fd);
+            return;
+        }
+        ssize_t recved = recv(fd, buffer, (size_t)(n<maxRead ? n : maxRead), 0);
         if(recved < 0) {
             LOGW("read client err [%d]", fd);
             return;
@@ -111,17 +118,13 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
         } else {
             buffer[recved] = '\0';
             //LOGI("receive client message [%d]: %s\n", fd, buffer);
-
             http_parser *parser = client->parser;
-
             if(parser==NULL){
-                http_parser *parser = (http_parser *)malloc(sizeof(http_parser));
+                parser = (http_parser *)malloc(sizeof(http_parser));
                 http_parser_init(parser, HTTP_REQUEST);
                 parser->data = client;
             }
-
             size_t nparsed = http_parser_execute(parser, &settings, buffer, recved);
-
             if (parser->upgrade) {
                 LOGW("do not support protocol upgrade [%d]", fd);
                 close_client(fd);
