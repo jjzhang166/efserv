@@ -20,6 +20,9 @@ int EventLoop::on_url(http_parser *parser, const char *at, size_t length) {
 
 
     client->url = url;
+
+    client->urlEndWithSlash = (url[url.length()-1] == '/');
+
     client->parser = parser;
 
     string filePath = SERV_ENV.getAbsoluteWebRoot()+url;
@@ -147,6 +150,12 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
         }
 
         if(client->file->isFile()){                                                // is file
+
+            if(client->urlEndWithSlash){                                           // if end with '/', it's considered to be a directory, but it's a file, so 404
+                Response::respondErr(fd, 404);
+                goto end_write;
+            }
+
             FILE* file_fp = client->file_fp;
             if(file_fp == NULL){
                 file_fp = fopen(client->file->getAbsolutePath().c_str(), "rb");
@@ -169,12 +178,23 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
 
             Response::respondContent(fd, buffer, len);
             goto wait_next_write;
-        }else if(stoi(SERV_ENV.getConfig(KEY_DIR_INDEXS, DEFAULT_DIR_INDEXS))){     // is dir and dir indexs enable
-            vector<FileHandler> files = client->file->listDir();
-            Response::respondIndexs(fd, files, client->url);
-            goto end_write;
-        }else{                                                              // of course 403
-            Response::respondErr(fd, 403);
+        }else if(client->file->isDir()){                                             // is dir
+
+            if(!client->urlEndWithSlash){                                            // if not end with '/', it's considered to be a file, but it's a dir, redirect to add a '/'
+                Response::respondRedirection(fd, 301, client->url+"/");
+                goto end_write;
+            }
+
+            if(stoi(SERV_ENV.getConfig(KEY_DIR_INDEXS, DEFAULT_DIR_INDEXS))) {       // dir indexs enable
+                vector<FileHandler> files = client->file->listDir();
+                Response::respondIndexs(fd, files, client->url);
+                goto end_write;
+            }else{                                                                   // of course 403
+                Response::respondErr(fd, 403);
+                goto end_write;
+            }
+        }else{                                                                       // 500
+            Response::respondErr(fd, 500);
             goto end_write;
         }
 

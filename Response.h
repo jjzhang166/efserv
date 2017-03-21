@@ -29,6 +29,8 @@ class Response {
         static void respondHeader(int fd, string mimetype, size_t content_length);
         static void respondContent(int fd, const char* content, size_t length);
 
+        static void respondRedirection(int fd, int status_code, string location);
+
     private:
         static inline void header(int fd, string line){
             string tmp = line+"\r\n";

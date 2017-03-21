@@ -161,7 +161,8 @@ Look at `/usr/local/efserv/.efserv_access`
 + /demo
 ```
 
-`+` meaning allow while `-` mening denied.
+`+` means allow
+`-` means denied.
 
 And regex pattern is fine, for example
 

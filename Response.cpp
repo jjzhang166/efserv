@@ -134,3 +134,40 @@ void Response::respondIndexs(int fd, vector<FileHandler> files, string url) {
 
     respondContent(fd, content.c_str(), len);
 }
+
+void Response::respondRedirection(int fd, int status_code, string location) {
+    string msg;
+    switch(status_code){
+        case 300:
+            msg = "Multiple Choices";
+            break;
+        case 301:
+            msg = "Moved Permanently";
+            break;
+        default:
+            status_code = 302;
+        case 302:
+            msg = "Found (Moved Temporarily)";
+            break;
+        case 303:
+            msg = "See Other";
+            break;
+        case 304:
+            msg = "Not Modified";
+            break;
+        case 305:
+            msg = "Use Proxy";
+            break;
+        case 306:
+            msg = "Switch Proxy (Unused)";
+            break;
+        case 307:
+            msg = "Temporary Redirect";
+            break;
+    }
+    header(fd, "HTTP/1.1 "+to_string(status_code)+" "+msg);
+    header(fd, "Server", HEADER_SERVER);
+    header(fd, "X-Powered-By", HEADER_SERVER);
+    header(fd, "Location", location);
+    header_end(fd);
+}
