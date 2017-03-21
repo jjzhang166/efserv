@@ -71,8 +71,10 @@ string FileHandler::getName() {
 }
 
 string FileHandler::getExt() {
-    string absolutePath = getAbsolutePath();
-    return absolutePath.erase(0, absolutePath.find_last_of('.')+1);
+    string tmp = getAbsolutePath();
+    tmp.erase(0, tmp.find_last_of('.')+1);
+    transform(tmp.begin(), tmp.end(), tmp.begin(), (int (*)(int))tolower);
+    return tmp;
 }
 
 string FileHandler::getMimeType() {
