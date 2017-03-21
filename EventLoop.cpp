@@ -108,7 +108,7 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
 
         size_t readSize = (size_t)(n<READ_SOCKET_BUFFER_MAX_SIZE ? n : READ_SOCKET_BUFFER_MAX_SIZE);
 
-        size_t recved = (size_t)recv(fd, buffer, readSize, 0);
+        ssize_t recved = (size_t)recv(fd, buffer, readSize, 0);
         if(recved < 0) {
             LOGW("read client err [%d]", fd);
             return;
@@ -126,11 +126,11 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
                 http_parser_init(parser, HTTP_REQUEST);
                 parser->data = client;
             }
-            size_t nparsed = http_parser_execute(parser, &settings, buffer, recved);
+            size_t nparsed = http_parser_execute(parser, &settings, buffer, (size_t)recved);
             if (parser->upgrade) {
                 LOGW("do not support protocol upgrade [%d]", fd);
                 close_client(fd);
-            } else if (nparsed != recved) {
+            } else if (nparsed != (size_t)recved) {
                 LOGW("parse http error, msg: %s [%d]", http_errno_description(parser->http_errno), fd);
                 close_client(fd);
             }
