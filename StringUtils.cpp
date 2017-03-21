@@ -36,3 +36,11 @@ string StringUtils::replaceAll(string str, string find, string replace) {
     }
     return str;
 }
+
+void StringUtils::toUpper(string &str) {
+    transform(str.begin(), str.end(), str.begin(), (int (*)(int))toupper);
+}
+
+void StringUtils::toLower(string &str) {
+    transform(str.begin(), str.end(), str.begin(), (int (*)(int))tolower);
+}

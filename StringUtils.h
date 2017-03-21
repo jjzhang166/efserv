@@ -15,6 +15,8 @@ class StringUtils {
     public:
         static vector<string> split(string str, string pattern, int limit=-1);
         static string replaceAll(string str, string find, string replace);
+        static void toUpper(string &str);
+        static void toLower(string &str);
 
 };
 
