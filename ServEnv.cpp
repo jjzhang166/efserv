@@ -56,7 +56,6 @@ void ServEnv::parseConfig(string path) {
     if (ini->perror == Ini::NO_ERROR) {
         LOGI("Parse config file \"%s\" %ssuc%s", path, ANSI_COLOR_GREEN, ANSI_COLOR_NORMAL);
     } else {
-        ini = new Ini();
         LOGI(
                 "Parse config file \"%s\" %sfailed%s, maybe file not exist, will use default values for all params",
                 path, ANSI_COLOR_ORANGE, ANSI_COLOR_NORMAL
