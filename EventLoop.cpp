@@ -101,11 +101,14 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
         char buffer[READ_SOCKET_BUFFER_MAX_SIZE+1];     // last byte '\0'
         int n;
         if(ioctl(fd, FIONREAD, &n)){
-            LOGW("ioctl FIONREAD err [%d]", fd);
+            LOGW("ioctl socket FIONREAD err [%d]", fd);
             close_client(fd);
             return;
         }
-        size_t recved = (size_t)recv(fd, buffer, (size_t)(n<READ_SOCKET_BUFFER_MAX_SIZE ? n : READ_SOCKET_BUFFER_MAX_SIZE), 0);
+
+        size_t readSize = (size_t)(n<READ_SOCKET_BUFFER_MAX_SIZE ? n : READ_SOCKET_BUFFER_MAX_SIZE);
+
+        size_t recved = (size_t)recv(fd, buffer, readSize, 0);
         if(recved < 0) {
             LOGW("read client err [%d]", fd);
             return;
@@ -175,8 +178,20 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
 
             if(feof(file_fp)) goto end_write;
 
+            int file_fd = fileno(file_fp);
+            int n;
+            if(ioctl(file_fd, FIONREAD, &n)){
+                LOGW("ioctl file FIONREAD err [%d]", fd);
+                close_client(fd);
+                return;
+            }
+
             char buffer[READ_FILE_BUFFER_MAX_SIZE];
-            size_t len = fread(buffer, 1, sizeof(buffer), file_fp);
+            size_t readSize = (size_t)(n<READ_FILE_BUFFER_MAX_SIZE ? n : READ_FILE_BUFFER_MAX_SIZE);
+
+            if(readSize==0) readSize ++;    // attempt to reach eof
+
+            size_t len = fread(buffer, 1, readSize, file_fp);
 
             if(len==0) goto wait_next_write;
 
