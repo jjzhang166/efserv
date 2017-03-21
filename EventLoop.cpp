@@ -98,15 +98,14 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
 
     if(EV_READ & e){
         LOGD("client io read event [%d]", fd);
-        char buffer[BUFFER_SIZE];
-        int maxRead = sizeof(buffer)-1;
+        char buffer[READ_SOCKET_BUFFER_MAX_SIZE+1];     // last byte '\0'
         int n;
         if(ioctl(fd, FIONREAD, &n)){
             LOGW("ioctl FIONREAD err [%d]", fd);
             close_client(fd);
             return;
         }
-        ssize_t recved = recv(fd, buffer, (size_t)(n<maxRead ? n : maxRead), 0);
+        size_t recved = (size_t)recv(fd, buffer, (size_t)(n<READ_SOCKET_BUFFER_MAX_SIZE ? n : READ_SOCKET_BUFFER_MAX_SIZE), 0);
         if(recved < 0) {
             LOGW("read client err [%d]", fd);
             return;
@@ -138,7 +137,6 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
 
     if((EV_WRITE & e) && client->read_complete){
         LOGD("client io write event [%d]", fd);
-        ClientInfo* client = client_list[fd];
 
         if(!ACCESS_RULE.permissible(client->url)){             // check permission in .efserv_access
             Response::respondErr(fd, 403);
@@ -177,8 +175,8 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
 
             if(feof(file_fp)) goto end_write;
 
-            char buffer[BUFFER_SIZE];
-            ssize_t len = fread(buffer, 1, sizeof(buffer), file_fp);
+            char buffer[READ_FILE_BUFFER_MAX_SIZE];
+            size_t len = fread(buffer, 1, sizeof(buffer), file_fp);
 
             if(len==0) goto wait_next_write;
 

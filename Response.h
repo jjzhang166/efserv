@@ -26,7 +26,7 @@ class Response {
         static void respondErr(int fd, int status_code);
         static void respondIndexs(int fd, vector<FileHandler> files, string url);
 
-        static void respondHeader(int fd, string mimetype, size_t content_length);
+        static void respondHeader(int fd, string mimetype, off_t content_length);
         static void respondContent(int fd, const char* content, size_t length);
 
         static void respondRedirection(int fd, int status_code, string location);

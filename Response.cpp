@@ -24,7 +24,7 @@ void Response::loadTpl() {
     }
 }
 
-void Response::respondHeader(int fd, string mimetype, size_t content_length) {
+void Response::respondHeader(int fd, string mimetype, off_t content_length) {
     header(fd, "HTTP/1.1 200 OK");
     header(fd, "Server", HEADER_SERVER);
     header(fd, "X-Powered-By", HEADER_SERVER);

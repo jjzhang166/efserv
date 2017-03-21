@@ -19,8 +19,9 @@
 #include "ServEnv.h"
 #include "AccessRule.h"
 
-#define MAX_ALLOWED_CLIENT      102400
-#define BUFFER_SIZE             2048
+#define MAX_ALLOWED_CLIENT                  102400
+#define READ_SOCKET_BUFFER_MAX_SIZE         4096
+#define READ_FILE_BUFFER_MAX_SIZE           4096
 
 class ClientInfo{
     public:
