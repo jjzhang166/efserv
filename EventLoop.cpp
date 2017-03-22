@@ -8,6 +8,8 @@
 ClientInfo* EventLoop::client_list[MAX_ALLOWED_CLIENT];
 struct ev_loop* EventLoop::main_loop;
 ev_io EventLoop::ev_io_accept;
+ev_idle EventLoop::repeat_watcher;
+ev_async EventLoop::ready_watcher;
 int EventLoop::serv_sock;
 http_parser_settings EventLoop::settings;
 string EventLoop::listen_addr;
@@ -34,9 +36,8 @@ int EventLoop::on_url(http_parser *parser, const char *at, size_t length) {
 int EventLoop::on_message_complete(http_parser *parser) {
     int fd = ((ClientInfo*)parser->data)->fd;
     ClientInfo* client = client_list[fd];
-    client->read_complete = true;
     LOGD("on_message_complete [%d]", fd);
-
+    respond_to_client(client);
     return 0;
 }
 
@@ -81,7 +82,7 @@ void EventLoop::accept_handler(struct ev_loop *loop, ev_io *ev_io_accept, int e)
     LOGD("client connected [%d]", client_sock);
     client_list[client_sock] = new ClientInfo(client_sock, ev_io_client);
 
-    ev_io_init(ev_io_client, client_io_handler, client_sock, EV_READ | EV_WRITE);
+    ev_io_init(ev_io_client, client_io_handler, client_sock, EV_READ /*| EV_WRITE*/); // no need for EV_WRITE
     ev_io_start(main_loop, ev_io_client);
 }
 
@@ -137,103 +138,115 @@ void EventLoop::client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_clie
         }
         return;
     }
+}
 
-    if((EV_WRITE & e) && client->read_complete){
-        LOGD("client io write event [%d]", fd);
+int EventLoop::file_open_done(eio_req *req) {
 
-        if(!ACCESS_RULE.permissible(client->url)){             // check permission in .efserv_access
-            Response::respondErr(fd, 403);
-            goto end_write;
-        }
+    ClientInfo* client = (ClientInfo*)req->data;
 
-        if(!client->file->exist()){                            // 404
-            Response::respondErr(fd, 404);
-            goto end_write;
-        }
+    if(req->result < 0){
+        LOGW("err open file [%d]", client->fd);
+        close_client(client->fd);
+    }else{
+        int file_fd = (int)req->result;
+        off_t content_length = client->file->size();
+        Response::respondHeader(client->fd, client->file->getMimeType(), content_length);
+        client->file_fd = file_fd;
+        eio_sendfile(client->fd, file_fd, 0, content_length, 0, file_send_done, client);
+    }
+    return 0;
+}
 
-        if(outOfWebRoot(client)){
-            Response::respondErr(fd, 403);
-            goto end_write;
-        }
+int EventLoop::file_send_done(eio_req *req) {
 
-        if(client->file->isFile()){                                                // is file
+    ClientInfo* client = (ClientInfo*)req->data;
 
-            if(client->urlEndWithSlash){                                           // if end with '/', it's considered to be a directory, but it's a file, so 404
-                Response::respondErr(fd, 404);
-                goto end_write;
-            }
+    if(req->result < 0){
+        LOGW("err open file [%d]", client->fd);
+        close_client(client->fd);
+    }else{
+        close(client->file_fd);
+        client->file_fd = -1;
+    }
+    return 0;
+}
 
-            FILE* file_fp = client->file_fp;
-            if(file_fp == NULL){
-                file_fp = fopen(client->file->getAbsolutePath().c_str(), "rb");
-                if(file_fp==NULL){             // 404
-                    Response::respondErr(fd, 404);
-                    goto end_write;
-                }
-                client->file_fp = file_fp;
-                off_t content_length = client->file->size();
-                Response::respondHeader(fd, client->file->getMimeType(), content_length);
-            }
+void EventLoop::respond_to_client(ClientInfo *client) {
+    int fd = client->fd;
+    LOGD("client io write event [%d]", fd);
 
-
-            if(feof(file_fp)) goto end_write;
-
-            int file_fd = fileno(file_fp);
-            int n;
-            if(ioctl(file_fd, FIONREAD, &n)){
-                LOGW("ioctl file FIONREAD err [%d]", fd);
-                close_client(fd);
-                return;
-            }
-
-            char buffer[READ_FILE_BUFFER_MAX_SIZE];
-            size_t readSize = (size_t)(n<READ_FILE_BUFFER_MAX_SIZE ? n : READ_FILE_BUFFER_MAX_SIZE);
-
-            if(readSize==0) readSize ++;    // attempt to reach eof
-
-            size_t len = fread(buffer, 1, readSize, file_fp);
-
-            if(len==0) goto wait_next_write;
-
-            Response::respondContent(fd, buffer, len);
-            goto wait_next_write;
-        }else if(client->file->isDir()){                                             // is dir
-
-            if(!client->urlEndWithSlash){                                            // if not end with '/', it's considered to be a file, but it's a dir, redirect to add a '/'
-                Response::respondRedirection(fd, 301, client->url+"/");
-                goto end_write;
-            }
-
-            if(stoi(SERV_ENV.getConfig(KEY_DIR_INDEXS, DEFAULT_DIR_INDEXS))) {       // dir indexs enable
-                vector<FileHandler> files = client->file->listDir();
-                Response::respondIndexs(fd, files, client->url);
-                goto end_write;
-            }else{                                                                   // of course 403
-                Response::respondErr(fd, 403);
-                goto end_write;
-            }
-        }else{                                                                       // 500
-            Response::respondErr(fd, 500);
-            goto end_write;
-        }
-
-        end_write:
-        close_client(fd);
-
-        wait_next_write:
-
-        return;
+    if(!ACCESS_RULE.permissible(client->url)){             // check permission in .efserv_access
+        Response::respondErr(fd, 403);
+        goto __end;
     }
 
+    if(!client->file->exist()){                            // 404
+        Response::respondErr(fd, 404);
+        goto __end;
+    }
 
+    if(outOfWebRoot(client)){
+        Response::respondErr(fd, 403);
+        goto __end;
+    }
 
+    if(client->file->isFile()){                                                // is file
 
+        if(client->urlEndWithSlash){                                           // if end with '/', it's considered to be a directory, but it's a file, so 404
+            Response::respondErr(fd, 404);
+            goto __end;
+        }
+
+        if(!eio_open(client->file->getAbsolutePath().c_str(), O_RDONLY, 0, 0, file_open_done, client)){
+            LOGW("err eio open file");
+            close_client(fd);
+        }
+        goto __end;
+    }else if(client->file->isDir()){                                             // is dir
+
+        if(!client->urlEndWithSlash){                                            // if not end with '/', it's considered to be a file, but it's a dir, redirect to add a '/'
+            Response::respondRedirection(fd, 301, client->url+"/");
+            goto __end;
+        }
+
+        if(stoi(SERV_ENV.getConfig(KEY_DIR_INDEXS, DEFAULT_DIR_INDEXS))) {       // dir indexs enable
+            vector<FileHandler> files = client->file->listDir();
+            Response::respondIndexs(fd, files, client->url);
+            goto __end;
+        }else{                                                                   // of course 403
+            Response::respondErr(fd, 403);
+            goto __end;
+        }
+    }else{                                                                       // 500
+        Response::respondErr(fd, 500);
+        goto __end;
+    }
+
+    __end:
+    return;
 }
 
 
+void EventLoop::want_poll() {
+    ev_async_send (main_loop, &ready_watcher);
+}
+
+void EventLoop::done_poll() {
+
+}
+
+void EventLoop::repeat (EV_P_ ev_idle *w, int revents) {
+    if (eio_poll () != -1)
+        ev_idle_stop (main_loop, w);
+}
+
+void EventLoop::ready (EV_P_ ev_async *w, int revents) {
+    if (eio_poll () == -1)
+        ev_idle_start (main_loop, &repeat_watcher);
+}
 
 void EventLoop::init() {
-    main_loop = ev_default_loop(0);
+    main_loop = EV_DEFAULT;
 
     settings.on_url = on_url;
     settings.on_message_complete = on_message_complete;
@@ -248,7 +261,7 @@ void EventLoop::start() {
     serv_addr.sin_family = AF_INET;
 
     listen_addr = SERV_ENV.getConfig(KEY_LISTEN, DEFAULT_LISTEN);
-    int port = stoi(SERV_ENV.getConfig(KEY_PORT, DEFAULT_PORT));
+    port = stoi(SERV_ENV.getConfig(KEY_PORT, DEFAULT_PORT));
 
     serv_addr.sin_addr.s_addr = inet_addr(listen_addr.c_str());
     serv_addr.sin_port = htons(port);
@@ -266,7 +279,23 @@ void EventLoop::start() {
 
     int bReuseaddr=1;
     if(setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&bReuseaddr, sizeof(bReuseaddr)) != 0) {
-        printf("set sock option error in reuse addr[%d]", serv_sock);
+        printf("set sock option reuse addr error[%d]", serv_sock);
+        exit(1);
+    }
+
+    int bKeepAlive=1;
+    if(setsockopt(serv_sock, SOL_SOCKET, SO_KEEPALIVE, (const char*)&bKeepAlive, sizeof(bKeepAlive)) != 0){
+        printf("set sock option keep alive error[%d]", serv_sock);
+        exit(1);
+    }
+
+    int bKeepAliveTime = MAX_KEEP_ALIVE_TIME;
+#ifdef __APPLE__
+    if(setsockopt(serv_sock, IPPROTO_TCP, TCP_KEEPALIVE, &bKeepAliveTime, sizeof(bKeepAliveTime)) != 0){
+#else
+    if(setsockopt(serv_sock, IPPROTO_TCP, TCP_KEEPIDLE, &bKeepAliveTime, sizeof(bKeepAliveTime)) != 0){
+#endif
+        printf("set sock option keep alive time error[%d]", serv_sock);
         exit(1);
     }
 
@@ -277,8 +306,14 @@ void EventLoop::start() {
          ANSI_COLOR_NORMAL
     );
 
+    ev_idle_init (&repeat_watcher, repeat);
+    ev_async_init (&ready_watcher, ready);
+    ev_async_start (main_loop, &ready_watcher);
+    eio_init (want_poll, done_poll);
+
     ev_io_init(&ev_io_accept, accept_handler, serv_sock, EV_READ);
     ev_io_start(main_loop, &ev_io_accept);
+
     ev_run(main_loop, 0);
 
 }

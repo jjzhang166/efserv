@@ -25,6 +25,9 @@
 #define DEFAULT_WEB_ROOT            "/var/www"
 #define DEFAULT_INI_FILE            ".efserv_config"
 
+
+#define MAX_KEEP_ALIVE_TIME         60
+
 #include "Ini.h"
 #include "trim.h"
 #include "FileHandler.h"

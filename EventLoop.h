@@ -9,11 +9,15 @@
 #include <fstream>
 #include <vector>
 #include <ev.h>
+#include <eio.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <http_parser.h>
 #include <sys/ioctl.h>
+#include <poll.h>
+#include <fcntl.h>
 #include "Response.h"
 #include "FileHandler.h"
 #include "ServEnv.h"
@@ -21,7 +25,6 @@
 
 #define MAX_ALLOWED_CLIENT                  102400
 #define READ_SOCKET_BUFFER_MAX_SIZE         4096
-#define READ_FILE_BUFFER_MAX_SIZE           4096
 
 class ClientInfo{
     public:
@@ -29,12 +32,11 @@ class ClientInfo{
         bool urlEndWithSlash;
         FileHandler* file;
         http_parser *parser;
-        FILE* file_fp;
+        int file_fd;
         ev_io* io;
         int fd;
-        bool read_complete;
 
-        ClientInfo(int fd, ev_io* io) : file(NULL), parser(NULL), file_fp(NULL), io(NULL), read_complete(false)
+        ClientInfo(int fd, ev_io* io) : file(NULL), parser(NULL), file_fd(-1), io(NULL)
                 {
             this->fd = fd;
             this->io = io;
@@ -43,7 +45,7 @@ class ClientInfo{
         ~ClientInfo(){
             close(fd);
             if(io!=NULL) free(io);
-            if(file_fp!=NULL) fclose(file_fp);
+            if(file_fd!=-1) close(file_fd);
             if(parser!=NULL) free(parser);
             if(file!=NULL) delete(file);
         }
@@ -61,6 +63,8 @@ class EventLoop {
         static ClientInfo *client_list[MAX_ALLOWED_CLIENT];
         static struct ev_loop *main_loop;
         static ev_io ev_io_accept;
+        static ev_idle repeat_watcher;
+        static ev_async ready_watcher;
         static int serv_sock;
         static http_parser_settings settings;
 
@@ -76,6 +80,13 @@ class EventLoop {
         static void close_client(int fd);
         static void accept_handler(struct ev_loop *loop, ev_io *ev_io_accept, int e);
         static void client_io_handler(struct ev_loop *loop, struct ev_io *ev_io_client, int e);
+        static void respond_to_client(ClientInfo *client);
+        static void want_poll (void);
+        static void done_poll (void);
+        static void ready (EV_P_ ev_async *w, int revents);
+        static void repeat (EV_P_ ev_idle *w, int revents);
+        static int file_open_done(eio_req *req);
+        static int file_send_done(eio_req *req);
 
     private:
         static inline bool outOfWebRoot(ClientInfo* client){

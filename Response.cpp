@@ -26,8 +26,6 @@ void Response::loadTpl() {
 
 void Response::respondHeader(int fd, string mimetype, off_t content_length) {
     header(fd, "HTTP/1.1 200 OK");
-    header(fd, "Server", HEADER_SERVER);
-    header(fd, "X-Powered-By", HEADER_SERVER);
     header(fd, "Content-Type", mimetype);
     header(fd, "Content-Length", to_string(content_length));
     header_end(fd);
@@ -67,8 +65,6 @@ void Response::respondErr(int fd, int status_code) {
     content = assign(content, "msg", msg);
     size_t len = content.length();
 
-    header(fd, "Server", HEADER_SERVER);
-    header(fd, "X-Powered-By", HEADER_SERVER);
     header(fd, "Content-Type", "text/html");
     header(fd, "Content-Length", to_string(len));
     header_end(fd);
@@ -78,8 +74,6 @@ void Response::respondErr(int fd, int status_code) {
 void Response::respondIndexs(int fd, vector<FileHandler> files, string url) {
 
     header(fd, "HTTP/1.1 200 OK");
-    header(fd, "Server", HEADER_SERVER);
-    header(fd, "X-Powered-By", HEADER_SERVER);
     header(fd, "Content-Type", "text/html");
 
     size_t fileCount = files.size();
@@ -166,8 +160,6 @@ void Response::respondRedirection(int fd, int status_code, string location) {
             break;
     }
     header(fd, "HTTP/1.1 "+to_string(status_code)+" "+msg);
-    header(fd, "Server", HEADER_SERVER);
-    header(fd, "X-Powered-By", HEADER_SERVER);
     header(fd, "Location", location);
     header_end(fd);
 }
