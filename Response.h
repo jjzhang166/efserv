@@ -45,8 +45,8 @@ class Response {
         static inline void header_end(int fd){
             header(fd, "Server", HEADER_SERVER);
             header(fd, "X-Powered-By", HEADER_SERVER);
-            header(fd, "Connection", "keep-alive");
-            header(fd, "Keep-Alive", "timeout="+to_string(MAX_KEEP_ALIVE_TIME));
+//            header(fd, "Connection", "keep-alive");
+//            header(fd, "Keep-Alive", "timeout="+to_string(MAX_KEEP_ALIVE_TIME));
             send(fd, "\r\n", 2, 0);
         }
 

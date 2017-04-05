@@ -165,8 +165,9 @@ int EventLoop::file_send_done(eio_req *req) {
         LOGW("err open file [%d]", client->fd);
         close_client(client->fd);
     }else{
-        close(client->file_fd);
-        client->file_fd = -1;
+//        close(client->file_fd);
+//        client->file_fd = -1;
+        close_client(client->fd);
     }
     return 0;
 }
@@ -199,9 +200,10 @@ void EventLoop::respond_to_client(ClientInfo *client) {
 
         if(!eio_open(client->file->getAbsolutePath().c_str(), O_RDONLY, 0, 0, file_open_done, client)){
             LOGW("err eio open file");
-            close_client(fd);
+            Response::respondErr(fd, 500);
+            goto __end;
         }
-        goto __end;
+        return;
     }else if(client->file->isDir()){                                             // is dir
 
         if(!client->urlEndWithSlash){                                            // if not end with '/', it's considered to be a file, but it's a dir, redirect to add a '/'
@@ -223,6 +225,7 @@ void EventLoop::respond_to_client(ClientInfo *client) {
     }
 
     __end:
+    close_client(fd);
     return;
 }
 
@@ -283,21 +286,21 @@ void EventLoop::start() {
         exit(1);
     }
 
-    int bKeepAlive=1;
-    if(setsockopt(serv_sock, SOL_SOCKET, SO_KEEPALIVE, (const char*)&bKeepAlive, sizeof(bKeepAlive)) != 0){
-        printf("set sock option keep alive error[%d]", serv_sock);
-        exit(1);
-    }
-
-    int bKeepAliveTime = MAX_KEEP_ALIVE_TIME;
-#ifdef __APPLE__
-    if(setsockopt(serv_sock, IPPROTO_TCP, TCP_KEEPALIVE, &bKeepAliveTime, sizeof(bKeepAliveTime)) != 0){
-#else
-    if(setsockopt(serv_sock, IPPROTO_TCP, TCP_KEEPIDLE, &bKeepAliveTime, sizeof(bKeepAliveTime)) != 0){
-#endif
-        printf("set sock option keep alive time error[%d]", serv_sock);
-        exit(1);
-    }
+//    int bKeepAlive=1;
+//    if(setsockopt(serv_sock, SOL_SOCKET, SO_KEEPALIVE, (const char*)&bKeepAlive, sizeof(bKeepAlive)) != 0){
+//        printf("set sock option keep alive error[%d]", serv_sock);
+//        exit(1);
+//    }
+//
+//    int bKeepAliveTime = MAX_KEEP_ALIVE_TIME;
+//#ifdef __APPLE__
+//    if(setsockopt(serv_sock, IPPROTO_TCP, TCP_KEEPALIVE, &bKeepAliveTime, sizeof(bKeepAliveTime)) != 0){
+//#else
+//    if(setsockopt(serv_sock, IPPROTO_TCP, TCP_KEEPIDLE, &bKeepAliveTime, sizeof(bKeepAliveTime)) != 0){
+//#endif
+//        printf("set sock option keep alive time error[%d]", serv_sock);
+//        exit(1);
+//    }
 
     LOGI("Listen %s%s:%d%s ......",
          ANSI_COLOR_BLUE,
