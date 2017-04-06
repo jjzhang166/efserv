@@ -165,9 +165,8 @@ int EventLoop::file_send_done(eio_req *req) {
         LOGW("err open file [%d]", client->fd);
         close_client(client->fd);
     }else{
-//        close(client->file_fd);
-//        client->file_fd = -1;
-        close_client(client->fd);
+        close(client->file_fd);
+        client->file_fd = -1;
     }
     return 0;
 }
@@ -203,7 +202,6 @@ void EventLoop::respond_to_client(ClientInfo *client) {
             Response::respondErr(fd, 500);
             goto __end;
         }
-        return;
     }else if(client->file->isDir()){                                             // is dir
 
         if(!client->urlEndWithSlash){                                            // if not end with '/', it's considered to be a file, but it's a dir, redirect to add a '/'
@@ -225,7 +223,6 @@ void EventLoop::respond_to_client(ClientInfo *client) {
     }
 
     __end:
-    close_client(fd);
     return;
 }
 
@@ -270,37 +267,23 @@ void EventLoop::start() {
     serv_addr.sin_port = htons(port);
 
 
-    if( ::bind(serv_sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) != 0 ){
-        LOGE("addr bind error");
-        exit(1);
-    }
-
-    if( listen(serv_sock, SOMAXCONN) < 0 ) {
-        LOGE("listen error");
-        exit(1);
-    }
+    int error;
 
     int bReuseaddr=1;
-    if(setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&bReuseaddr, sizeof(bReuseaddr)) != 0) {
-        printf("set sock option reuse addr error[%d]", serv_sock);
+    if( (error = ::setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&bReuseaddr, sizeof(bReuseaddr))) != 0 ) {
+        printf("set sock option reuse addr error %d [%d]", error, serv_sock);
         exit(1);
     }
 
-//    int bKeepAlive=1;
-//    if(setsockopt(serv_sock, SOL_SOCKET, SO_KEEPALIVE, (const char*)&bKeepAlive, sizeof(bKeepAlive)) != 0){
-//        printf("set sock option keep alive error[%d]", serv_sock);
-//        exit(1);
-//    }
-//
-//    int bKeepAliveTime = MAX_KEEP_ALIVE_TIME;
-//#ifdef __APPLE__
-//    if(setsockopt(serv_sock, IPPROTO_TCP, TCP_KEEPALIVE, &bKeepAliveTime, sizeof(bKeepAliveTime)) != 0){
-//#else
-//    if(setsockopt(serv_sock, IPPROTO_TCP, TCP_KEEPIDLE, &bKeepAliveTime, sizeof(bKeepAliveTime)) != 0){
-//#endif
-//        printf("set sock option keep alive time error[%d]", serv_sock);
-//        exit(1);
-//    }
+    if( (error = ::bind(serv_sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr))) != 0 ){
+        LOGE("addr bind error %d", error);
+        exit(1);
+    }
+
+    if( (error = ::listen(serv_sock, SOMAXCONN)) < 0 ) {
+        LOGE("listen error %d", error);
+        exit(1);
+    }
 
     LOGI("Listen %s%s:%d%s ......",
          ANSI_COLOR_BLUE,
