@@ -271,7 +271,7 @@ void EventLoop::start() {
 
     int bReuseaddr=1;
     if( (error = ::setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&bReuseaddr, sizeof(bReuseaddr))) != 0 ) {
-        printf("set sock option reuse addr error %d [%d]", error, serv_sock);
+        printf("set sock option reuse addr error %d", error);
         exit(1);
     }
 
