@@ -22,12 +22,20 @@ int EventLoop::on_url(http_parser *parser, const char *at, size_t length) {
 
 
     client->url = url;
+    int pos = url.find_first_of('?');
+    if(pos!=string::npos){
+        client->path = url.substr(0, pos);
+        client->query = url.substr(pos+1);
+    }else{
+        client->path = url;
+        client->query = "";
+    }
 
-    client->urlEndWithSlash = (url[url.length()-1] == '/');
+    client->urlEndWithSlash = (client->path[client->path.length()-1] == '/');
 
     client->parser = parser;
 
-    string filePath = SERV_ENV.getAbsoluteWebRoot()+url;
+    string filePath = SERV_ENV.getAbsoluteWebRoot()+client->path;
     client->file = new FileHandler(filePath);
     LOGI("GET %s [%d]", url, fd);
     return 0;
@@ -205,13 +213,15 @@ void EventLoop::respond_to_client(ClientInfo *client) {
     }else if(client->file->isDir()){                                             // is dir
 
         if(!client->urlEndWithSlash){                                            // if not end with '/', it's considered to be a file, but it's a dir, redirect to add a '/'
-            Response::respondRedirection(fd, 301, client->url+"/");
+            Response::respondRedirection(fd, 301, client->path+"/?"+client->query);
             goto __end;
         }
 
         if(stoi(SERV_ENV.getConfig(KEY_DIR_INDEXS, DEFAULT_DIR_INDEXS))) {       // dir indexs enable
             vector<FileHandler> files = client->file->listDir();
-            Response::respondIndexs(fd, files, client->url);
+            string query = client->query;
+            transform(query.begin(), query.end(), query.begin(), ::tolower);
+            Response::respondIndexs(fd, files, client->path, (query==string("json")) );
             goto __end;
         }else{                                                                   // of course 403
             Response::respondErr(fd, 403);

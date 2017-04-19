@@ -71,62 +71,71 @@ void Response::respondErr(int fd, int status_code) {
     respondContent(fd, content.c_str(), len);
 }
 
-void Response::respondIndexs(int fd, vector<FileHandler> files, string url) {
+void Response::respondIndexs(int fd, vector<FileHandler> files, string url, bool outputJson) {
 
     header(fd, "HTTP/1.1 200 OK");
-    header(fd, "Content-Type", "text/html");
+    if(outputJson){
+        size_t fileCount = files.size();
+        string fileListJson = "[\n";
+        for(int i=0; i<fileCount; i++){
 
-    size_t fileCount = files.size();
-    string fileListJson = "[\n";
-    for(int i=0; i<fileCount; i++){
+            FileHandler file = files[i];
 
-        FileHandler file = files[i];
+            /**
+             * ignore the url that are denied
+             */
+            string tmp = url;
+            rtrim(tmp, '/');
+            tmp += "/" + file.getName();
+            if(!ACCESS_RULE.permissible(tmp)){
+                continue;
+            }
 
-        /**
-         * ignore the url that are denied
-         */
-        string tmp = url;
-        rtrim(tmp, '/');
-        tmp += "/" + file.getName();
-        if(!ACCESS_RULE.permissible(tmp)){
-            continue;
+            string obj = tfm::format(
+                    "    {\n"
+                    "        \"is_file\":%s,\n"
+                    "        \"is_link\":%s,\n"
+                    "        \"name\":\"%s\",\n"
+                    "        \"ext\":\"%s\",\n"
+                    "        \"mime_type\":\"%s\",\n"
+                    "        \"ctime\":%ld,\n"
+                    "        \"mtime\":%ld,\n"
+                    "        \"atime\":%ld\n"
+                    "    }",
+                    file.isFile() ? "true" : "false",
+                    file.isLink() ? "true" : "false",
+                    file.getName(),
+                    file.getExt(),
+                    file.getMimeType(),
+                    file.getCreateTime(),
+                    file.getModifyTime(),
+                    file.getAccessTime()
+            );
+            if(i==fileCount-1)  obj += "\n";
+            else                obj += ",\n";
+            fileListJson += obj;
         }
-
-        string obj = tfm::format(
-                "    {\n"
-                "        \"is_file\":%s,\n"
-                "        \"is_link\":%s,\n"
-                "        \"name\":\"%s\",\n"
-                "        \"ext\":\"%s\",\n"
-                "        \"mime_type\":\"%s\",\n"
-                "        \"ctime\":%ld,\n"
-                "        \"mtime\":%ld,\n"
-                "        \"atime\":%ld\n"
-                "    }",
-                file.isFile() ? "true" : "false",
-                file.isLink() ? "true" : "false",
-                file.getName(),
-                file.getExt(),
-                file.getMimeType(),
-                file.getCreateTime(),
-                file.getModifyTime(),
-                file.getAccessTime()
+        fileListJson += "]";
+        string data = tfm::format(
+                "{\n"
+                "    \"path\":\"%s\",\n"
+                "    \"list\":%s\n"
+                "}",
+                url,
+                fileListJson
         );
-        if(i==fileCount-1)  obj += "\n";
-        else                obj += ",\n";
-        fileListJson += obj;
+        size_t len = data.length();
+        header(fd, "Content-Type", "application/json");
+        header(fd, "Content-Length", to_string(len));
+        header_end(fd);
+        respondContent(fd, data.c_str(), len);
+    }else {
+        size_t len = dir_indexs_html.length();
+        header(fd, "Content-Type", "text/html");
+        header(fd, "Content-Length", to_string(len));
+        header_end(fd);
+        respondContent(fd, dir_indexs_html.c_str(), len);
     }
-    fileListJson += "]";
-
-    string content;
-    content = assign(dir_indexs_html, "file_list", fileListJson);
-    content = assign(content, "url", url);
-    size_t len = content.length();
-
-    header(fd, "Content-Length", to_string(len));
-    header_end(fd);
-
-    respondContent(fd, content.c_str(), len);
 }
 
 void Response::respondRedirection(int fd, int status_code, string location) {

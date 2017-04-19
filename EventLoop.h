@@ -29,6 +29,8 @@
 class ClientInfo{
     public:
         string url;
+        string path;
+        string query;
         bool urlEndWithSlash;
         FileHandler* file;
         http_parser *parser;

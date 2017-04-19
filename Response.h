@@ -24,7 +24,7 @@ class Response {
 
     public:
         static void respondErr(int fd, int status_code);
-        static void respondIndexs(int fd, vector<FileHandler> files, string url);
+        static void respondIndexs(int fd, vector<FileHandler> files, string url, bool outputJson);
 
         static void respondHeader(int fd, string mimetype, off_t content_length);
         static void respondContent(int fd, const char* content, size_t length);
