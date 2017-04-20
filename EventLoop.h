@@ -89,13 +89,16 @@ class EventLoop {
         static void repeat (EV_P_ ev_idle *w, int revents);
         static int file_open_done(eio_req *req);
         static int file_send_done(eio_req *req);
+        static FileHandler* builtInDir;
 
     private:
         static inline bool outOfWebRoot(ClientInfo* client){
             string webRoot = SERV_ENV.getAbsoluteWebRoot();
+            string builtInWebRoot = builtInDir->getAbsolutePath();
             string path = client->file->getAbsolutePath();
-            string tmp = path.substr(0, webRoot.length());
-            return webRoot != tmp;
+            string tmp1 = path.substr(0, webRoot.length());
+            string tmp2 = path.substr(0, builtInWebRoot.length());
+            return webRoot != tmp1 && builtInWebRoot != tmp2;
         }
 
 };

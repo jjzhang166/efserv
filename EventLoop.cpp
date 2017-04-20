@@ -14,6 +14,7 @@ int EventLoop::serv_sock;
 http_parser_settings EventLoop::settings;
 string EventLoop::listen_addr;
 int EventLoop::port;
+FileHandler* EventLoop::builtInDir;
 
 int EventLoop::on_url(http_parser *parser, const char *at, size_t length) {
     int fd = ((ClientInfo*)parser->data)->fd;
@@ -190,7 +191,7 @@ void EventLoop::respond_to_client(ClientInfo *client) {
     }
 
     if(!client->file->exist()){                            // 404
-        string builtInPath = SERV_ENV.getConfig(KEY_BUILT_IN, DEFAULT_BUILT_IN) + client->path;
+        string builtInPath = builtInDir->getAbsolutePath() + client->path;
         FileHandler* builtInFile = new FileHandler(builtInPath);
         if(builtInFile->exist() && builtInFile->isFile()){
             LOGD("file %s not exit but found in built-in dir, use it [%d]", client->path, fd);
@@ -200,11 +201,11 @@ void EventLoop::respond_to_client(ClientInfo *client) {
             Response::respondErr(fd, 404);
             goto __end;
         }
-    }else{
-        if(outOfWebRoot(client)){
-            Response::respondErr(fd, 403);
-            goto __end;
-        }
+    }
+
+    if(outOfWebRoot(client)){
+        Response::respondErr(fd, 403);
+        goto __end;
     }
 
     if(client->file->isFile()){                                                // is file
@@ -265,6 +266,8 @@ void EventLoop::ready (EV_P_ ev_async *w, int revents) {
 }
 
 void EventLoop::init() {
+    if(builtInDir==NULL) builtInDir = new FileHandler(SERV_ENV.getConfig(KEY_BUILT_IN, DEFAULT_BUILT_IN));
+
     main_loop = EV_DEFAULT;
 
     settings.on_url = on_url;
