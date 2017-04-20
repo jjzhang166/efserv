@@ -4,9 +4,9 @@
     <!-- {{url}} is assigned by efserv -->
     <title>Indexs of {{url}}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link href="resources/style/style_indexs.css" type="text/css" rel="stylesheet">
-    <link href="resources/style/style_file_icon.css" type="text/css" rel="stylesheet">
-    <script src="resources/script/angular.min.js" type="text/javascript"></script>
+    <link   href="resources/style/style_indexs.css"     type="text/css" rel="stylesheet">
+    <link   href="resources/style/style_file_icon.css"  type="text/css" rel="stylesheet">
+    <script src="resources/script/angular.min.js"       type="text/javascript"></script>
 </head>
 
 <!-- {{xxx}} in the body is rendered by angular -->
@@ -15,12 +15,12 @@
     <table>
         <thead>
             <tr>
-                <th class="{{ (orderByField=='is_file')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('is_file')" style="width: 48px;">Type</th>
-                <th class="{{ (orderByField=='name')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('name')">Name</th>
-                <th class="{{ (orderByField=='mime_type')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('mime_type')">MimeType</th>
-                <th class="{{ (orderByField=='ctime')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('ctime')">Create Time</th>
-                <th class="{{ (orderByField=='mtime')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('mtime')">Modify Time</th>
-                <th class="{{ (orderByField=='atime')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('atime')">Access Time</th>
+                <th class="{{ getOrderIcon('is_file') }}"   ng-click="reOrderBy('is_file')"     style="width: 48px;" >Type</th>
+                <th class="{{ getOrderIcon('name') }}"      ng-click="reOrderBy('name')"                             >Name</th>
+                <th class="{{ getOrderIcon('mime_type') }}" ng-click="reOrderBy('mime_type')"                        >MimeType</th>
+                <th class="{{ getOrderIcon('ctime') }}"     ng-click="reOrderBy('ctime')"                            >Create Time</th>
+                <th class="{{ getOrderIcon('mtime') }}"     ng-click="reOrderBy('mtime')"                            >Modify Time</th>
+                <th class="{{ getOrderIcon('atime') }}"     ng-click="reOrderBy('atime')"                            >Access Time</th>
             </tr>
         </thead>
         <tbody>
@@ -59,6 +59,10 @@
                 $scope.orderByDesc = false;
             }
             $scope.doOrder();
+        };
+
+        $scope.getOrderIcon = function (field) {
+            return ($scope.orderByField===field)?($scope.orderByDesc?'desc':'asc' ):'';
         };
 
         // add a query "?json" to get file list json
