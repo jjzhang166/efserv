@@ -18,6 +18,7 @@
             <th class="{{ getOrderIcon('is_file') }}" ng-click="reOrderBy('is_file')" style="min-width:48px; width: 48px;">Type</th>
             <th class="{{ getOrderIcon('name') }}" ng-click="reOrderBy('name')">Name</th>
             <th class="{{ getOrderIcon('mime_type') }}" ng-click="reOrderBy('mime_type')">MimeType</th>
+            <th class="{{ getOrderIcon('size') }}" ng-click="reOrderBy('size')">Size</th>
             <th class="{{ getOrderIcon('ctime') }}" ng-click="reOrderBy('ctime')">Create Time</th>
             <th class="{{ getOrderIcon('mtime') }}" ng-click="reOrderBy('mtime')">Modify Time</th>
             <th class="{{ getOrderIcon('atime') }}" ng-click="reOrderBy('atime')">Access Time</th>
@@ -28,6 +29,7 @@
             <td style="text-align: center"><span class="{{file.is_file?'icon icon_file':'icon icon_dir'}}"></span></td>
             <td><a href="{{file.is_file?file.name:file.name+'/'}}">{{file.is_file?file.name:file.name+'/'}}</a></td>
             <td>{{file.mime_type}}</td>
+            <td>{{file.size|bytes}}</td>
             <td>{{file.ctime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td>{{file.mtime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
             <td>{{file.atime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
@@ -74,6 +76,15 @@
 
         $scope.orderByField = 'name';
         $scope.orderByDesc = false;
-    })
+    });
+    app.filter('bytes', function() {
+        return function(bytes, precision) {
+            if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
+            if (typeof precision === 'undefined') precision = 1;
+            var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
+                number = Math.floor(Math.log(bytes) / Math.log(1024));
+            return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
+        }
+    });
 </script>
 </html>

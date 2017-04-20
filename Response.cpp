@@ -99,6 +99,7 @@ void Response::respondIndexs(int fd, vector<FileHandler> files, string url, bool
                     "        \"name\":\"%s\",\n"
                     "        \"ext\":\"%s\",\n"
                     "        \"mime_type\":\"%s\",\n"
+                    "        \"size\":%ld,\n"
                     "        \"ctime\":%ld,\n"
                     "        \"mtime\":%ld,\n"
                     "        \"atime\":%ld\n"
@@ -108,6 +109,7 @@ void Response::respondIndexs(int fd, vector<FileHandler> files, string url, bool
                     file.getName(),
                     file.getExt(),
                     file.getMimeType(),
+                    file.size(),
                     file.getCreateTime(),
                     file.getModifyTime(),
                     file.getAccessTime()
