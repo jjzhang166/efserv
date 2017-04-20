@@ -9,7 +9,7 @@
         body {  color: #000000;  background-color: #FFFFFF;  }
         a:link {  color: #4898d5; text-decoration: none;  cursor: pointer;  }
         a {  color: #4898d5; text-decoration: none;  cursor: pointer;  }
-        span {  font-size: smaller;  }
+        footer {  margin-top: 8px; font-size: smaller;  }
     </style>
 </head>
 
@@ -18,10 +18,6 @@
 <p>
     {{status_code}} {{msg}}
 </p>
-
-<h2>Error {{status_code}}</h2>
-<address>
-  <span>powered by efserv</span>
-</address>
+<footer>powered by <a href="https://github.com/xiaozhuai/efserv" target="_blank">efserv</a> {{efserv_version}}</footer>
 </body>
 </html>

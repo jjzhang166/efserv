@@ -2,7 +2,7 @@
 body {  color: #000000;  background-color: #FFFFFF;  }
 a:link {  color: #4898d5; text-decoration: none;  cursor: pointer;  }
 a {  color: #4898d5; text-decoration: none;  cursor: pointer;  }
-span {  font-size: smaller;  }
+footer {  margin-top: 8px; font-size: smaller;  }
 
 table {
     border: 1px solid #d3d3d3;

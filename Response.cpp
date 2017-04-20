@@ -63,6 +63,7 @@ void Response::respondErr(int fd, int status_code) {
     string content;
     content = assign(err_html, "status_code", to_string(status_code));
     content = assign(content, "msg", msg);
+    content = assign(content, "efserv_version", EFSERV_VERSION);
     size_t len = content.length();
 
     header(fd, "Content-Type", "text/html");
@@ -131,6 +132,7 @@ void Response::respondIndexs(int fd, vector<FileHandler> files, string url, bool
         respondContent(fd, data.c_str(), len);
     }else {
         string content = assign(dir_indexs_html, "url", url);
+        content = assign(content, "efserv_version", EFSERV_VERSION);
         size_t len = content.length();
         header(fd, "Content-Type", "text/html");
         header(fd, "Content-Length", to_string(len));
