@@ -37,6 +37,16 @@ int EventLoop::on_url(http_parser *parser, const char *at, size_t length) {
 
     string filePath = SERV_ENV.getAbsoluteWebRoot()+client->path;
     client->file = new FileHandler(filePath);
+    if(!client->file->exist()){
+        string builtInPath = SERV_ENV.getConfig(KEY_BUILT_IN, DEFAULT_BUILT_IN) + client->path;
+        FileHandler* builtInFile = new FileHandler(builtInPath);
+        if(builtInFile->exist() && builtInFile->isFile()){
+            LOGD("file %s not exit but found in built-in dir, use it [%d]", client->path, fd);
+            delete client->file;
+            client->file = builtInFile;
+        }
+    }
+
     LOGI("GET %s [%d]", url, fd);
     return 0;
 }

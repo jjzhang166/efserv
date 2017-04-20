@@ -13,7 +13,8 @@ string __dump_list__[] = {
         KEY_DIR_INDEXS,                 DEFAULT_DIR_INDEXS,
         KEY_DIR_INDEXS_TPL,             DEFAULT_DIR_INDEXS_TPL,
         KEY_ERR_TPL,                    DEFAULT_ERR_TPL,
-        KEY_ACCESS_RULE,                DEFAULT_ACCESS_RULE
+        KEY_ACCESS_RULE,                DEFAULT_ACCESS_RULE,
+        KEY_BUILT_IN,                   DEFAULT_BUILT_IN,
 };
 
 #define OVERRIDE_FLAG_STR(overridden)           ( overridden ? "\033[32m[ custom  ] \033[0m" : "\033[33m[ default ] \033[0m" )

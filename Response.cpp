@@ -130,11 +130,12 @@ void Response::respondIndexs(int fd, vector<FileHandler> files, string url, bool
         header_end(fd);
         respondContent(fd, data.c_str(), len);
     }else {
-        size_t len = dir_indexs_html.length();
+        string content = assign(dir_indexs_html, "url", url);
+        size_t len = content.length();
         header(fd, "Content-Type", "text/html");
         header(fd, "Content-Length", to_string(len));
         header_end(fd);
-        respondContent(fd, dir_indexs_html.c_str(), len);
+        respondContent(fd, content.c_str(), len);
     }
 }
 

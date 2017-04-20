@@ -14,6 +14,7 @@
 #define KEY_DIR_INDEXS_TPL          "dir_indexs_tpl"
 #define KEY_ERR_TPL                 "err_tpl"
 #define KEY_ACCESS_RULE             "access_rule"
+#define KEY_BUILT_IN                "built_in"
 
 #define DEFAULT_LISTEN              "0.0.0.0"
 #define DEFAULT_PORT                "80"
@@ -21,6 +22,7 @@
 #define DEFAULT_DIR_INDEXS_TPL      "/usr/local/efserv/tpl/dir_indexs.html"
 #define DEFAULT_ERR_TPL             "/usr/local/efserv/tpl/err.html"
 #define DEFAULT_ACCESS_RULE         ".efserv_access"
+#define DEFAULT_BUILT_IN            "/usr/local/efserv/built-in"
 
 #define DEFAULT_WEB_ROOT            "/var/www"
 #define DEFAULT_INI_FILE            ".efserv_config"
