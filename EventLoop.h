@@ -94,7 +94,8 @@ class EventLoop {
         static inline bool outOfWebRoot(ClientInfo* client){
             string webRoot = SERV_ENV.getAbsoluteWebRoot();
             string path = client->file->getAbsolutePath();
-            return path.length()<webRoot.length();
+            string tmp = path.substr(0, webRoot.length());
+            return webRoot != tmp;
         }
 
 };
