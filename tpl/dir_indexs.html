@@ -15,12 +15,12 @@
     <table>
         <thead>
             <tr>
-                <th ng-click="reOrderBy('is_file')" style="text-align: center; width: 16px;">Type</th>
-                <th ng-click="reOrderBy('name')">Name</th>
-                <th ng-click="reOrderBy('mime_type')">MimeType</th>
-                <th ng-click="reOrderBy('ctime')">Create Time</th>
-                <th ng-click="reOrderBy('mtime')">Modify Time</th>
-                <th ng-click="reOrderBy('atime')">Access Time</th>
+                <th class="{{ (orderByField=='is_file')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('is_file')" style="width: 48px;">Type</th>
+                <th class="{{ (orderByField=='name')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('name')">Name</th>
+                <th class="{{ (orderByField=='mime_type')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('mime_type')">MimeType</th>
+                <th class="{{ (orderByField=='ctime')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('ctime')">Create Time</th>
+                <th class="{{ (orderByField=='mtime')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('mtime')">Modify Time</th>
+                <th class="{{ (orderByField=='atime')?(orderByDesc?'desc':'asc' ):'' }}" ng-click="reOrderBy('atime')">Access Time</th>
             </tr>
         </thead>
         <tbody>

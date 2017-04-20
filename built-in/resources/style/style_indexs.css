@@ -18,8 +18,16 @@ table {
 th, td {  padding: 8px 8px;  text-align: left;  border-right: 1px solid #e0e0e0;  }
 th:last-child, td:last-child {  border-right: 0px;  }
 
-th {  text-shadow: 1px 1px 1px #fff;  background: #e8eaeb;  user-select: none;  cursor: ns-resize;  }
+th {  text-shadow: 1px 1px 1px #fff;  background-color: #e8eaeb !important;  user-select: none;  cursor: ns-resize;  }
 td {  border-top: 1px solid #e0e0e0;  }
 
 tbody tr:nth-child(even) {  background-color: #f1f1f1;  }
 tbody tr:nth-child(odd) {  background-color: #ffffff;  }
+
+.asc{
+    background: url(/resources/images/asc.png) no-repeat right 8px center;
+}
+
+.desc{
+    background: url(/resources/images/desc.png) no-repeat right 8px center;
+}
