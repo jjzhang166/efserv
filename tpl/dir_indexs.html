@@ -4,9 +4,9 @@
     <!-- {{url}} is assigned by efserv -->
     <title>Indexs of {{url}}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link   href="resources/style/style_indexs.css"     type="text/css" rel="stylesheet">
-    <link   href="resources/style/style_file_icon.css"  type="text/css" rel="stylesheet">
-    <script src="resources/script/angular.min.js"       type="text/javascript"></script>
+    <link href="resources/style/style_indexs.css" type="text/css" rel="stylesheet">
+    <link href="resources/style/style_file_icon.css" type="text/css" rel="stylesheet">
+    <script src="resources/script/angular.min.js" type="text/javascript"></script>
 </head>
 
 <!-- {{xxx}} in the body is rendered by angular -->
@@ -14,24 +14,24 @@
 <div id="content">
     <table>
         <thead>
-            <tr>
-                <th class="{{ getOrderIcon('is_file') }}"   ng-click="reOrderBy('is_file')"     style="width: 48px;" >Type</th>
-                <th class="{{ getOrderIcon('name') }}"      ng-click="reOrderBy('name')"                             >Name</th>
-                <th class="{{ getOrderIcon('mime_type') }}" ng-click="reOrderBy('mime_type')"                        >MimeType</th>
-                <th class="{{ getOrderIcon('ctime') }}"     ng-click="reOrderBy('ctime')"                            >Create Time</th>
-                <th class="{{ getOrderIcon('mtime') }}"     ng-click="reOrderBy('mtime')"                            >Modify Time</th>
-                <th class="{{ getOrderIcon('atime') }}"     ng-click="reOrderBy('atime')"                            >Access Time</th>
-            </tr>
+        <tr>
+            <th class="{{ getOrderIcon('is_file') }}" ng-click="reOrderBy('is_file')" style="min-width:48px; width: 48px;">Type</th>
+            <th class="{{ getOrderIcon('name') }}" ng-click="reOrderBy('name')">Name</th>
+            <th class="{{ getOrderIcon('mime_type') }}" ng-click="reOrderBy('mime_type')">MimeType</th>
+            <th class="{{ getOrderIcon('ctime') }}" ng-click="reOrderBy('ctime')">Create Time</th>
+            <th class="{{ getOrderIcon('mtime') }}" ng-click="reOrderBy('mtime')">Modify Time</th>
+            <th class="{{ getOrderIcon('atime') }}" ng-click="reOrderBy('atime')">Access Time</th>
+        </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="file in file_list">
-                <td style="text-align: center"><span class="{{file.is_file?'icon icon_file':'icon icon_dir'}}"></span></td>
-                <td><a href="{{file.is_file?file.name:file.name+'/'}}">{{file.is_file?file.name:file.name+'/'}}</a></td>
-                <td>{{file.mime_type}}</td>
-                <td>{{file.ctime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
-                <td>{{file.mtime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
-                <td>{{file.atime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
-            </tr>
+        <tr ng-repeat="file in file_list">
+            <td style="text-align: center"><span class="{{file.is_file?'icon icon_file':'icon icon_dir'}}"></span></td>
+            <td><a href="{{file.is_file?file.name:file.name+'/'}}">{{file.is_file?file.name:file.name+'/'}}</a></td>
+            <td>{{file.mime_type}}</td>
+            <td>{{file.ctime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
+            <td>{{file.mtime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
+            <td>{{file.atime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
+        </tr>
         </tbody>
     </table>
 </div>
@@ -43,7 +43,7 @@
         var file_list;
 
         $scope.getOrderCondition = function (field) {
-            if(field === 'name') return ['is_file','name'];
+            if (field === 'name') return ['is_file', 'name'];
             else return field;
         };
 
@@ -51,10 +51,10 @@
             $scope.file_list = $filter('orderBy')(file_list, $scope.getOrderCondition($scope.orderByField), $scope.orderByDesc);
         };
 
-        $scope.reOrderBy = function(field){
-            if($scope.orderByField === field){
+        $scope.reOrderBy = function (field) {
+            if ($scope.orderByField === field) {
                 $scope.orderByDesc = !$scope.orderByDesc;
-            }else{
+            } else {
                 $scope.orderByField = field;
                 $scope.orderByDesc = false;
             }
@@ -62,7 +62,7 @@
         };
 
         $scope.getOrderIcon = function (field) {
-            return ($scope.orderByField===field)?($scope.orderByDesc?'desc':'asc' ):'';
+            return ($scope.orderByField === field) ? ($scope.orderByDesc ? 'desc' : 'asc' ) : '';
         };
 
         // add a query "?json" to get file list json
