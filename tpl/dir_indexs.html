@@ -172,7 +172,7 @@
         $scope.go = function (a) {
             var p = "";
             for(var i=0; i<=a; i++){
-                p += pathList[i] + "/";
+                p += $scope.pathList[i] + "/";
             }
             p = p.substr(1);
             window.location.href = p;
