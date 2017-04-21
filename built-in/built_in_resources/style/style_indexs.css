@@ -114,23 +114,23 @@ footer {  margin-top: 8px; font-size: smaller;  }
 }
 
 .panel-head>.btn-home{
-    background: url(/resources/images/btn_home.png) no-repeat center center;
+    background: url(/built_in_resources/images/btn_home.png) no-repeat center center;
 }
 
 .panel-head>.btn-refresh{
-    background: url(/resources/images/btn_refresh.png) no-repeat center center;
+    background: url(/built_in_resources/images/btn_refresh.png) no-repeat center center;
 }
 
 .panel-head>.btn-go-top{
-    background: url(/resources/images/btn_go_top.png) no-repeat center center;
+    background: url(/built_in_resources/images/btn_go_top.png) no-repeat center center;
 }
 
 .panel-head>.btn-eye-visble{
-    background: url(/resources/images/btn_eye_visble.png) no-repeat center center;
+    background: url(/built_in_resources/images/btn_eye_visble.png) no-repeat center center;
 }
 
 .panel-head>.btn-eye-invisble{
-    background: url(/resources/images/btn_eye_invisble.png) no-repeat center center;
+    background: url(/built_in_resources/images/btn_eye_invisble.png) no-repeat center center;
 }
 
 .panel-head>input{
@@ -185,9 +185,9 @@ tbody tr:nth-child(even) {  background-color: #f1f1f1;  }
 tbody tr:nth-child(odd) {  background-color: #ffffff;  }
 
 .asc{
-    background: url(/resources/images/asc.png) no-repeat right 8px center;
+    background: url(/built_in_resources/images/asc.png) no-repeat right 8px center;
 }
 
 .desc{
-    background: url(/resources/images/desc.png) no-repeat right 8px center;
+    background: url(/built_in_resources/images/desc.png) no-repeat right 8px center;
 }
