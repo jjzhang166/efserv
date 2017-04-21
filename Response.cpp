@@ -73,7 +73,9 @@ void Response::respondErr(int fd, int status_code) {
 }
 
 void Response::respondIndexs(int fd, vector<FileHandler> files, string url, bool outputJson) {
-
+#ifdef DEBUG
+    loadTpl();
+#endif
     header(fd, "HTTP/1.1 200 OK");
     if(outputJson){
         size_t fileCount = files.size();

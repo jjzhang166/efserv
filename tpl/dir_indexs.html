@@ -11,39 +11,58 @@
 
 <!-- {{xxx}} in the body is rendered by angular -->
 <body ng-app="efserv_dir_indexs" ng-controller="dir_indexs">
-<div id="content">
-    <table>
-        <thead>
-        <tr>
-            <th class="{{ getOrderIcon('is_file') }}" ng-click="reOrderBy('is_file')" style="min-width:48px; width: 48px;">Type</th>
-            <th class="{{ getOrderIcon('name') }}" ng-click="reOrderBy('name')">Name</th>
-            <th class="{{ getOrderIcon('mime_type') }}" ng-click="reOrderBy('mime_type')">MimeType</th>
-            <th class="{{ getOrderIcon('size') }}" ng-click="reOrderBy('size')">Size</th>
-            <th class="{{ getOrderIcon('ctime') }}" ng-click="reOrderBy('ctime')">Create Time</th>
-            <th class="{{ getOrderIcon('mtime') }}" ng-click="reOrderBy('mtime')">Modify Time</th>
-            <th class="{{ getOrderIcon('atime') }}" ng-click="reOrderBy('atime')">Access Time</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="file in file_list">
-            <td style="text-align: center"><span class="{{file.is_file?'icon icon_file':'icon icon_dir'}}"></span></td>
-            <td><a href="{{file.is_file?file.name:file.name+'/'}}">{{file.is_file?file.name:file.name+'/'}}</a></td>
-            <td>{{file.mime_type}}</td>
-            <td>{{file.size|bytes}}</td>
-            <td>{{file.ctime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
-            <td>{{file.mtime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
-            <td>{{file.atime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
-        </tr>
-        </tbody>
-    </table>
+<div class="panel">
+    <div class="panel-title">
+        {{dir}}
+    </div>
+    <div class="panel-head">
+        <button title="Go Home" onclick="window.location.href='/'" class="btn btn-home"></button>
+        <button title="Go Top" onclick="window.location.href+='..'" class="btn btn-go-top"></button>
+        <button title="Refresh" onclick="window.location.reload()" class="btn btn-refresh"></button>
+        <button title="{{showHidden?'Hidden Invisble':'Hidden Visble'}}" ng-click="showHidden=!showHidden" class="btn {{showHidden?'btn-eye-invisble':'btn-eye-visble'}}"></button>
+        <!--<input ng-model="path">-->
+        <div>
+        <button class="path-btn" ng-repeat="x in pathList" ng-click="go($index)">{{x}}</button>
+        </div>
+    </div>
+    <div class="panel-body">
+        <table>
+            <thead>
+            <tr>
+                <th class="{{ getOrderIcon('name') }}" ng-click="reOrderBy('name')">Name</th>
+                <th class="{{ getOrderIcon('mime_type') }}" ng-click="reOrderBy('mime_type')">MimeType</th>
+                <th class="{{ getOrderIcon('size') }}" ng-click="reOrderBy('size')">Size</th>
+                <th class="{{ getOrderIcon('ctime') }}" ng-click="reOrderBy('ctime')">Create Time</th>
+                <th class="{{ getOrderIcon('mtime') }}" ng-click="reOrderBy('mtime')">Modify Time</th>
+                <th class="{{ getOrderIcon('atime') }}" ng-click="reOrderBy('atime')">Access Time</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="file in file_list" ng-show="showHidden || file.name[0]!=='.'">
+                <td><a class="{{file.is_file?'icon icon_file':'icon icon_dir'}}" href="{{file.is_file?file.name:file.name+'/'}}">{{file.is_file?file.name:file.name+'/'}}</a></td>
+                <td>{{file.mime_type}}</td>
+                <td>{{file.size|bytes}}</td>
+                <td>{{file.ctime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
+                <td>{{file.mtime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
+                <td>{{file.atime|date:"yyyy-MM-dd HH:mm:ss"}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-footer">
+        powered by <a href="https://github.com/xiaozhuai/efserv" target="_blank">efserv</a> {{efserv_version}}
+    </div>
 </div>
-<footer>powered by <a href="https://github.com/xiaozhuai/efserv" target="_blank">efserv</a> {{efserv_version}}</footer>
 </body>
 
 <script>
     var app = angular.module('efserv_dir_indexs', []);
     app.controller('dir_indexs', function ($scope, $filter, $http) {
         var file_list;
+        var path;
+        var pathList = [];
+
+        $scope.showHidden = true;
 
         $scope.getOrderCondition = function (field) {
             if (field === 'name') return ['is_file', 'name'];
@@ -71,8 +90,27 @@
         // add a query "?json" to get file list json
         $http.get('?json').then(function (response) {
             file_list = response.data.list;
+            path = response.data.path;
+            var tmp = path.split("/");
+            pathList.push("/");
+            for(var i=0; i<tmp.length; i++){
+                if(tmp[i]!=="") pathList.push(tmp[i]);
+            }
+            $scope.path = path;
+            $scope.dir = pathList[pathList.length-1];
+            $scope.pathList = pathList;
             $scope.doOrder();
         });
+
+        $scope.go = function (a) {
+            var p = "";
+            for(var i=0; i<=a; i++){
+                p += pathList[i] + "/";
+            }
+            p = p.substr(1);
+            console.log(p);
+            window.location.href = p;
+        };
 
         $scope.orderByField = 'name';
         $scope.orderByDesc = false;
