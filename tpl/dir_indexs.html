@@ -151,8 +151,8 @@
             return ($scope.orderByField === field) ? ($scope.orderByDesc ? 'desc' : 'asc' ) : '';
         };
 
-        $scope.$watch('path', function (newPath, oldPath, scope) {
-            var tmp = newPath.split("/");
+        $scope.genPathRouter = function (path, oldPath, scope) {
+            var tmp = path.split("/");
             var pathList = [];
             pathList.push("/");
             for(var i=0; i<tmp.length; i++){
@@ -160,12 +160,13 @@
             }
             $scope.dir = pathList[pathList.length-1];
             $scope.pathList = pathList;
-        });
+        };
 
         // add a query "?json" to get file list json
         $http.get('?json').then(function (response) {
             $scope.file_list = response.data.list;
             $scope.path = response.data.path;
+            $scope.genPathRouter($scope.path);
             $scope.doOrder();
         });
 
