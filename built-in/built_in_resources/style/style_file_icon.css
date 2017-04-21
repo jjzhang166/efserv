@@ -7,8 +7,8 @@
     padding-left: 24px;
 }
 .icon_file{
-    background: url(/resources/icon/icon_file.png);
+    background: url(/built_in_resources/icon/icon_file.png);
 }
 .icon_dir{
-    background: url(/resources/icon/icon_dir.png);
+    background: url(/built_in_resources/icon/icon_dir.png);
 }
