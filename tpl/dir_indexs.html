@@ -106,7 +106,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="file in file_list" ng-show="showHidden || file.name[0]!=='.'">
+            <tr ng-repeat="file in ordered_file_list" ng-show="showHidden || file.name[0]!=='.'">
                 <td><a class="{{file.is_file?'icon icon_file':'icon icon_dir'}}" href="{{file.is_file?file.name:file.name+'/'}}">{{file.is_file?file.name:file.name+'/'}}</a></td>
                 <td>{{file.mime_type}}</td>
                 <td>{{file.size|bytes}}</td>
@@ -126,10 +126,6 @@
 <script>
     var app = angular.module('efserv_dir_indexs', []);
     app.controller('dir_indexs', function ($scope, $filter, $http) {
-        var file_list;
-        var path;
-        var pathList = [];
-
         $scope.showHidden = true;
 
         $scope.getOrderCondition = function (field) {
@@ -138,7 +134,7 @@
         };
 
         $scope.doOrder = function () {
-            $scope.file_list = $filter('orderBy')(file_list, $scope.getOrderCondition($scope.orderByField), $scope.orderByDesc);
+            $scope.ordered_file_list = $filter('orderBy')($scope.file_list, $scope.getOrderCondition($scope.orderByField), $scope.orderByDesc);
         };
 
         $scope.reOrderBy = function (field) {
@@ -155,18 +151,21 @@
             return ($scope.orderByField === field) ? ($scope.orderByDesc ? 'desc' : 'asc' ) : '';
         };
 
-        // add a query "?json" to get file list json
-        $http.get('?json').then(function (response) {
-            file_list = response.data.list;
-            path = response.data.path;
-            var tmp = path.split("/");
+        $scope.$watch('path', function (newPath, oldPath, scope) {
+            var tmp = newPath.split("/");
+            var pathList = [];
             pathList.push("/");
             for(var i=0; i<tmp.length; i++){
                 if(tmp[i]!=="") pathList.push(tmp[i]);
             }
-            $scope.path = path;
             $scope.dir = pathList[pathList.length-1];
             $scope.pathList = pathList;
+        });
+
+        // add a query "?json" to get file list json
+        $http.get('?json').then(function (response) {
+            $scope.file_list = response.data.list;
+            $scope.path = response.data.path;
             $scope.doOrder();
         });
 
@@ -176,7 +175,6 @@
                 p += pathList[i] + "/";
             }
             p = p.substr(1);
-            console.log(p);
             window.location.href = p;
         };
 
