@@ -13,11 +13,57 @@ footer {  margin-top: 8px; font-size: smaller;  }
     height: calc(100% - 16px);
 }
 
+.panel button{
+    outline: none;
+}
+
 .panel-title{
     text-align: center;
     background-color: #e0e0e0;
     font-size: 12px;
     line-height: 1.8;
+}
+
+.panel-title>*{
+    display: inline-block;
+}
+
+.panel-title .ctrl-btn{
+    margin: 4px 4px;
+    border: 1px solid #d0d0d0;
+    width: 10px;
+    height: 10px;
+    border-radius: 6px;
+    float: left;
+    cursor: default;
+}
+
+.panel-title .ctrl-btn:first-child{
+    margin-left: 8px;
+}
+
+.panel-title .ctrl-btn-close{
+    background-color: #e00000;
+}
+
+.panel-title .ctrl-btn-close:hover{
+    background-color: #ff0000;
+}
+
+.panel-title .ctrl-btn-min{
+    background-color: #e08600;
+}
+
+.panel-title .ctrl-btn-min:hover{
+    background-color: #ffa500;
+}
+
+.panel-title .ctrl-btn-max{
+    background-color: #00e000;
+}
+
+.panel-title .ctrl-btn-max:hover{
+    background-color: #00ff00;
 }
 
 .panel-head{
@@ -46,10 +92,6 @@ footer {  margin-top: 8px; font-size: smaller;  }
     margin: 6px 2px;
 }
 
-.panel-head button{
-    outline: none;
-}
-
 .panel-head>.btn{
     width: 24px;
     height: 24px;
@@ -57,7 +99,7 @@ footer {  margin-top: 8px; font-size: smaller;  }
     border-radius: 4px;
     border: 1px solid #d3d3d3;
     background-color: #fefefe !important;
-    cursor: pointer;
+    cursor: default;
     user-select: none;
 }
 .panel-head>.btn:active{
@@ -98,7 +140,7 @@ footer {  margin-top: 8px; font-size: smaller;  }
     text-align: center;
     border: 1px solid #d3d3d3;
     background-color: #fefefe !important;
-    cursor: pointer;
+    cursor: default;
     color: #000000;
     user-select: none;
 }
