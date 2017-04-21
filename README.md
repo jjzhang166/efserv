@@ -75,7 +75,7 @@ Follow these steps:
 $ cd /path/to/efserv
 $ mkdir build
 $ cd build
-$ cmake ..
+$ cmake .. -DCMAKE_BUILD_TYPE=Debug # or Release
 $ make
 $ make install
 ```
