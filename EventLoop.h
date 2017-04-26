@@ -22,6 +22,7 @@
 #include "FileHandler.h"
 #include "ServEnv.h"
 #include "AccessRule.h"
+#include "UrlEncode.h"
 
 #define MAX_ALLOWED_CLIENT                  102400
 #define READ_SOCKET_BUFFER_MAX_SIZE         4096

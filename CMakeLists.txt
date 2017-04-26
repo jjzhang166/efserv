@@ -108,6 +108,7 @@ set(SOURCE_FILES
         StringUtils.cpp
         MimeType.cpp
         AccessRule.cpp
+        UrlEncode.cpp
 )
 # End of sources
 

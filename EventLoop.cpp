@@ -19,6 +19,7 @@ FileHandler* EventLoop::builtInDir;
 int EventLoop::on_url(http_parser *parser, const char *at, size_t length) {
     int fd = ((ClientInfo*)parser->data)->fd;
     string url(at, length);
+    url = UrlEncode::decode(url);
     ClientInfo* client = client_list[fd];
 
 
