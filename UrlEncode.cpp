@@ -5,10 +5,8 @@
 
 #include "UrlEncode.h"
 
-namespace CXXUrl {
-
 unsigned char UrlEncode::ToHex(unsigned char x) {
-    return  x > 9 ? x + 55 : x + 48;
+    return  (unsigned char)(x > 9 ? x + 55 : x + 48);
 }
 
 unsigned char UrlEncode::FromHex(unsigned char x) {
@@ -61,6 +59,4 @@ std::string UrlEncode::decode(const std::string &str) {
         else strTemp += str[i];
     }
     return strTemp;
-}
-
 }
