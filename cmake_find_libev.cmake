@@ -15,8 +15,6 @@ else()
             NAME ev
             HINTS ${LIBEV_ROOT_DIR}
             PATH_SUFFIXES ${CMAKE_INSTALL_LIBDIR})
-    set(LIBEV_INCLUDE_DIRS ${LIBEV_INCLUDE_DIR})
-    set(LIBEV_LIBRARIES ${LIBEV_LIBRARY})
     include(FindPackageHandleStandardArgs)
     find_package_handle_standard_args(
             libev DEFAULT_MSG LIBEV_LIBRARY LIBEV_INCLUDE_DIR)

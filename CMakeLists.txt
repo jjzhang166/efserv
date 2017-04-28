@@ -14,14 +14,13 @@ else()
 endif()
 
 include(cmake_find_libev.cmake)
-include(cmake_find_libeio.cmake)
-ADD_SUBDIRECTORY(thirdparty/libhttp_parser)
-ADD_SUBDIRECTORY(thirdparty/tinyformat)
-
+add_subdirectory(thirdparty/libeio)
+add_subdirectory(thirdparty/libhttp_parser)
+add_subdirectory(thirdparty/tinyformat)
 
 include_directories(
-        ${LIBEV_INCLUDE_DIRS}
-        ${LIBEIO_INCLUDE_DIRS}
+        ${LIBEV_INCLUDE_DIR}
+        ${libeio_BINARY_DIR}/include
         ${libhttp_parser_SOURCE_DIR}
         ${tinyformat_SOURCE_DIR}
 )
@@ -32,8 +31,8 @@ add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
 
 target_link_libraries(
         ${EXECUTABLE_NAME}
-        ${LIBEV_LIBRARIES}
-        ${LIBEIO_LIBRARIES}
+        ${LIBEV_LIBRARY}
+        eio
         http_parser
 )
 
