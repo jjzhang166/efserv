@@ -133,3 +133,13 @@ INSTALL(PROGRAMS ${PROJECT_BINARY_DIR}/${EXECUTABLE_NAME} DESTINATION bin)
 INSTALL(DIRECTORY tpl DESTINATION efserv)
 INSTALL(DIRECTORY built-in DESTINATION efserv)
 INSTALL(FILES README.md README_CN.md LICENSE.md .efserv_access config.ini DESTINATION efserv)
+
+
+# uninstall target
+configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+        IMMEDIATE @ONLY)
+
+add_custom_target(uninstall
+        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
