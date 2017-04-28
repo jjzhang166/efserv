@@ -14,7 +14,7 @@ Since it's a file server, all http request will be treated as `GET`
 
 # Dependencies
 * [libev](http://software.schmorp.de/pkg/libev.html) (not included in project)
-* [libeio](http://software.schmorp.de/pkg/libeio.html) (not include in project)
+* [libeio](http://software.schmorp.de/pkg/libeio.html) (included)
 * [http_parser](https://github.com/nodejs/http-parser) (included)
 * [tinyformat](https://github.com/c42f/tinyformat) (included)
 
@@ -38,31 +38,6 @@ You need brew. (A package manager for osx)
 
 ```
 $ brew install libev
-```
-
-## libeio
-
-You need build it from source.
-
-**1.** Checkout source, use cvs
-
-```
-$ cvs -z3 -d :pserver:anonymous@cvs.schmorp.de/schmorpforge co libeio
-```
-
-or with proxy 
-
-```
-$ cvs -z3 -d :pserver\;proxy=127.0.0.1\;proxyport=8118:anonymous@cvs.schmorp.de/schmorpforge co libeio
-```
-
-**2.** Build
-```
-$ cd /path/to/libeio
-$ ./autogen.sh
-$ ./configure
-$ make
-$ make install
 ```
 
 # Build
