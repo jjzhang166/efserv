@@ -20,20 +20,21 @@ add_subdirectory(thirdparty/tinyformat)
 
 include_directories(
         ${LIBEV_INCLUDE_DIR}
-        ${libeio_BINARY_DIR}/include
-        ${libhttp_parser_SOURCE_DIR}
-        ${tinyformat_SOURCE_DIR}
+        ${LIBEIO_INCLUDE_DIR}
+        ${LIBHTTP_PARSER_INCLUDE_DIR}
+        ${LIBTINYFORMAT_INCLUDE_DIR}
 )
 
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 
 add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
+add_dependencies(${EXECUTABLE_NAME} libeio)
 
 target_link_libraries(
         ${EXECUTABLE_NAME}
         ${LIBEV_LIBRARY}
-        eio
-        http_parser
+        ${LIBEIO_LIBRARY}
+        ${LIBHTTP_PARSER_LIBRARY}
 )
 
 
