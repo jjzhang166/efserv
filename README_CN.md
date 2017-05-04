@@ -14,11 +14,22 @@ efserv 是一个事件驱动异步模型的http静态文件服务器，使用C++
 
 # 依赖
 * [libev](http://software.schmorp.de/pkg/libev.html) (未包含在项目中)
-* [libeio](http://software.schmorp.de/pkg/libeio.html) (已包含在项目中)
+* [libeio](http://software.schmorp.de/pkg/libeio.html) (未包含在项目中)
 * [http_parser](https://github.com/nodejs/http-parser) (已包含在项目中)
 * [tinyformat](https://github.com/c42f/tinyformat) (已包含在项目中)
 
 在构建项目之前，你需要安装 `libev` 和 `libeio`
+
+## libeio
+
+```bash
+$ git clone https://github.com/xiaozhuai/libeio
+$ cd libeio
+$ ./autogen.sh
+$ ./configure
+$ make
+$ make install # maybe with sudo
+```
 
 ## libev
 

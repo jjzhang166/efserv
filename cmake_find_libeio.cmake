@@ -15,8 +15,6 @@ else()
             NAME eio
             HINTS ${LIBEIO_ROOT_DIR}
             PATH_SUFFIXES ${CMAKE_INSTALL_LIBDIR})
-    set(LIBEIO_INCLUDE_DIRS ${LIBEIO_INCLUDE_DIR})
-    set(LIBEIO_LIBRARIES ${LIBEIO_LIBRARY})
     include(FindPackageHandleStandardArgs)
     find_package_handle_standard_args(
             libeio DEFAULT_MSG LIBEIO_LIBRARY LIBEIO_INCLUDE_DIR)

@@ -14,11 +14,22 @@ Since it's a file server, all http request will be treated as `GET`
 
 # Dependencies
 * [libev](http://software.schmorp.de/pkg/libev.html) (not included in project)
-* [libeio](http://software.schmorp.de/pkg/libeio.html) (included)
+* [libeio](http://software.schmorp.de/pkg/libeio.html) (not included in project)
 * [http_parser](https://github.com/nodejs/http-parser) (included)
 * [tinyformat](https://github.com/c42f/tinyformat) (included)
 
 Before you can build, you need install `libev` and `libeio`.
+
+## libeio
+
+```bash
+$ git clone https://github.com/xiaozhuai/libeio
+$ cd libeio
+$ ./autogen.sh
+$ ./configure
+$ make
+$ make install # maybe with sudo
+```
 
 ## libev
 

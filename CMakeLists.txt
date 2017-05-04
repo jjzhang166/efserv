@@ -14,7 +14,7 @@ else()
 endif()
 
 include(cmake_find_libev.cmake)
-add_subdirectory(thirdparty/libeio)
+include(cmake_find_libeio.cmake)
 add_subdirectory(thirdparty/libhttp_parser)
 add_subdirectory(thirdparty/tinyformat)
 
@@ -28,7 +28,6 @@ include_directories(
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 
 add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
-add_dependencies(${EXECUTABLE_NAME} libeio)
 
 target_link_libraries(
         ${EXECUTABLE_NAME}
