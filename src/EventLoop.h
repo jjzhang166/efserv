@@ -59,6 +59,7 @@ class ClientInfo{
 class EventLoop {
 
     public:
+        static void bind();
         static void init();
         static void start();
 

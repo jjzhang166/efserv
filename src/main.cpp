@@ -8,7 +8,10 @@
 #include "EventLoop.h"
 #include "AccessRule.h"
 
+#define DEFAULT_PROC_COUNT 4
+
 string config_path = "";
+bool deamonize = false;
 
 void print_usage() {
     printf(
@@ -21,17 +24,18 @@ void print_usage() {
                     "  --config <file>           Define the ini config path, it will be \".efserv_config\" under web root by default\n"
                     "  --root <dir>              Define the web root path, it will be \"/var/www\" by default\n"
                     "  --log-level <level>       Define the log level, available levels are : disable, error, warning, info(default), debug\n"
+                    "  --deamon                  Run as deamonize mode\n"
                     "  --help                    Print this help message\n"
     );
 }
 
 void parse_arguments(int argc, char **argv) {
-
     int option_index = 0;
     struct option long_options[] = {
             {"config",    required_argument, NULL, 0},
             {"root",      required_argument, NULL, 0},
             {"log-level", required_argument, NULL, 0},
+            {"deamon",    no_argument,       NULL, 0},
             {"help",      no_argument,       NULL, 0},
             {0, 0, 0,                              0}
     };
@@ -63,6 +67,10 @@ void parse_arguments(int argc, char **argv) {
                 break;
 
             case 3:
+                deamonize = true;
+                break;
+
+            case 4:
                 print_usage();
                 exit(0);
 
@@ -98,9 +106,19 @@ int main(int argc, char **argv) {
     SERV_ENV.parseConfig(config_path);
     SERV_ENV.dumpConfigs();
     ACCESS_RULE.loadAccessRule();
+    EventLoop::bind();
+    for(int i=0; i<DEFAULT_PROC_COUNT; i++){
+        pid_t pid = fork();
+        if(pid > 0)
+            continue;
+        else if(pid < 0)
+            break;
+        else {
+            EventLoop::init();
+            EventLoop::start();
+        }
+    }
 
-    EventLoop::init();
-    EventLoop::start();
-
+    if(!deamonize) wait(NULL);
     exit(0);
 }

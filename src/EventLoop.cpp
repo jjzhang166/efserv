@@ -16,6 +16,14 @@ string EventLoop::listen_addr;
 int EventLoop::port;
 FileHandler* EventLoop::builtInDir;
 
+#define set_nonblock(fd)    do{                     \
+    int iFlags;                                     \
+    iFlags = fcntl(fd, F_GETFL, 0);                 \
+    iFlags |= O_NONBLOCK;                           \
+    iFlags |= O_NDELAY;                             \
+    fcntl(fd, F_SETFL, iFlags);                     \
+}while(0)
+
 int EventLoop::on_url(http_parser *parser, const char *at, size_t length) {
     int fd = ((ClientInfo*)parser->data)->fd;
     string url(at, length);
@@ -77,8 +85,9 @@ void EventLoop::accept_handler(struct ev_loop *loop, ev_io *ev_io_accept, int e)
         return ;
     }
     client_sock = accept(ev_io_accept->fd, (struct sockaddr*)&client_addr, &client_len);
+    set_nonblock(client_sock);
     if(client_sock < 0){
-        LOGW("accept error");
+        LOGD("accept error");
         return;
     }
     if(client_sock > MAX_ALLOWED_CLIENT) {
@@ -278,6 +287,18 @@ void EventLoop::init() {
 }
 
 void EventLoop::start() {
+    ev_idle_init (&repeat_watcher, repeat);
+    ev_async_init (&ready_watcher, ready);
+    ev_async_start (main_loop, &ready_watcher);
+    eio_init (want_poll, done_poll);
+
+    ev_io_init(&ev_io_accept, accept_handler, serv_sock, EV_READ);
+    ev_io_start(main_loop, &ev_io_accept);
+
+    ev_run(main_loop, 0);
+}
+
+void EventLoop::bind() {
     serv_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     struct sockaddr_in serv_addr;
     memset(&serv_addr, 0, sizeof(serv_addr));
@@ -308,21 +329,12 @@ void EventLoop::start() {
         exit(1);
     }
 
+    set_nonblock(serv_sock);
+
     LOGI("Listen %s%s:%d%s ......",
          ANSI_COLOR_BLUE,
          SERV_ENV.getConfig(KEY_LISTEN, DEFAULT_LISTEN),
          stoi(SERV_ENV.getConfig(KEY_PORT, DEFAULT_PORT)),
          ANSI_COLOR_NORMAL
     );
-
-    ev_idle_init (&repeat_watcher, repeat);
-    ev_async_init (&ready_watcher, ready);
-    ev_async_start (main_loop, &ready_watcher);
-    eio_init (want_poll, done_poll);
-
-    ev_io_init(&ev_io_accept, accept_handler, serv_sock, EV_READ);
-    ev_io_start(main_loop, &ev_io_accept);
-
-    ev_run(main_loop, 0);
-
 }

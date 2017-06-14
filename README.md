@@ -102,6 +102,7 @@ All arguments are long options
   --config <file>           Define the ini config path, it will be ".efserv_config" under web root by default
   --root <dir>              Define the web root path, it will be "/var/www" by default
   --log-level <level>       Define the log level, available levels are : disable, error, warning, info(default), debug
+  --deamon                  Run as deamonize mode
   --help                    Print this help message
 ```
 
@@ -114,6 +115,8 @@ And you can define a config file on command line provide `--config` option with 
 If you do not provided the `--config` option, efserv will find config file in web root which named `.efserv_config`. If not exist, it will use its default values.
 
 efserv has 5 log-level, and you can define it before runing use `--log-level` option.
+
+If you want run as deamonize mode, `--deamon` option provided.
 
 # Config
 

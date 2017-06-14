@@ -102,6 +102,7 @@ All arguments are long options
   --config <file>           Define the ini config path, it will be ".efserv_config" under web root by default
   --root <dir>              Define the web root path, it will be "/var/www" by default
   --log-level <level>       Define the log level, available levels are : disable, error, warning, info(default), debug
+  --deamon                  Run as deamonize mode
   --help                    Print this help message
 ```
 
@@ -114,6 +115,8 @@ All arguments are long options
 如果你运行时没有提供 `--config` 选项, efserv 将会在web根目录下寻找名为 `.efserv_config` 的文件作为配置文件. 如果不存在这个文件，将会使用内置的默认值。
 
 efserv 有5个日志等级， 你可以通过 `--log-level` 选项来调节。
+
+如果你想要用守护进程方式运行，使用 `--deamon` 选项。
 
 # 配置
 
